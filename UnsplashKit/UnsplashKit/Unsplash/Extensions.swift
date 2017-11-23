@@ -22,6 +22,7 @@ extension URL {
     }
 }
 
+
 extension UIColor {
     static func colorWithHexString(_ hex: String) -> UIColor {
         var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
