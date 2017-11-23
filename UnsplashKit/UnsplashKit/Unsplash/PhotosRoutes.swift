@@ -89,7 +89,8 @@ public class PhotosRoutes {
         
         let data = UIImageJPEGRepresentation(photo, 0.7)
         var params = [String : AnyObject]()
-        params["photo"] = data!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+//        params["photo"] = data!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        params["photo"] = data?.base64EncodedString(options: .lineLength64Characters) as AnyObject
         if let l = location {
             var locationParams = [String : AnyObject]()
             if l.city != nil { locationParams["city"] = l.city as AnyObject }
@@ -109,7 +110,7 @@ public class PhotosRoutes {
             params["exif"] = exifParams as AnyObject
         }
         
-        return UnsplashRequest(client: self.client, method: .POST, route: "/photos", auth: true, params: params, responseSerializer: Photo.Serializer())
+        return UnsplashRequest(client: self.client, method: .post, route: "/photos", auth: true, params: params, responseSerializer: Photo.Serializer())
     }
     
     public func updatePhoto(photoId: String, location: Location?=nil, exif: Exif?=nil) -> UnsplashRequest<Photo.Serializer> {
@@ -134,21 +135,21 @@ public class PhotosRoutes {
             if e.iso != nil { exifParams["iso_speed_ratings"] = NSNumber(value: e.iso!) }
             params["exif"] = exifParams as AnyObject
         }
-        return UnsplashRequest(client: self.client, method: .PUT, route: "/photos/\(photoId)", auth: true, params: params, responseSerializer: Photo.Serializer())
+        return UnsplashRequest(client: self.client, method: .put, route: "/photos/\(photoId)", auth: true, params: params, responseSerializer: Photo.Serializer())
     }
     
     public func likePhoto(photoId: String) -> UnsplashRequest<PhotoUserResult.Serializer> {
         precondition(client.authorized, "client is not authorized to make this request")
         
         let params = ["id" : photoId]
-        return UnsplashRequest(client: self.client, method: .POST, route: "/photos/\(photoId)/like", auth: true, params: params, responseSerializer: PhotoUserResult.Serializer())
+        return UnsplashRequest(client: self.client, method: .post, route: "/photos/\(photoId)/like", auth: true, params: params as [String : AnyObject], responseSerializer: PhotoUserResult.Serializer())
     }
     
     public func unlikePhoto(photoId: String) -> UnsplashRequest<DeleteResultSerializer> {
         precondition(client.authorized, "client is not authorized to make this request")
         
         let params = ["id" : photoId]
-        return UnsplashRequest(client: self.client, method: .DELETE, route: "/photos/\(photoId)/like", auth: true, params: params, responseSerializer: DeleteResultSerializer())
+        return UnsplashRequest(client: self.client, method: .delete, route: "/photos/\(photoId)/like", auth: true, params: params as [String : AnyObject], responseSerializer: DeleteResultSerializer())
     }
     
 }

@@ -13,20 +13,20 @@ public class UnsplashRequest<RType : JSONSerializer> {
     let responseSerializer : RType
     let request : Alamofire.Request
     
-    init(client: UnsplashClient, method: Alamofire.Method, route: String, auth: Bool, params: [String : AnyObject]?, responseSerializer: RType) {
+    init(client: UnsplashClient, method: Alamofire.HTTPMethod, route: String, auth: Bool, params: [String : AnyObject]?, responseSerializer: RType) {
         self.responseSerializer = responseSerializer
         
         let url = "\(client.host)\(route)"
         let headers = client.additionalHeaders(authNeeded: auth)
         
 //        self.request = client.manager.request(.GET, url, parameters: params, encoding: ParameterEncoding.URL, headers: headers)
-        self.request = client.manager.request(url, method: .get, parameters: params, encoding: ParameterEncoding.URL, headers: headers)
+        self.request = client.manager.request(url, method: HTTPMethod.get, parameters: params, encoding: ParameterEncoding.encode(url), headers: headers)
         
         request.resume()
     }
     
     convenience init(client: UnsplashClient, route: String, auth: Bool, params: [String : AnyObject]?, responseSerializer: RType) {
-        self.init(client: client, method: .GET, route: route, auth: auth, params: params, responseSerializer: responseSerializer)
+        self.init(client: client, method: HTTPMethod.get, route: route, auth: auth, params: params, responseSerializer: responseSerializer)
         
 
     }
@@ -40,6 +40,7 @@ public class UnsplashRequest<RType : JSONSerializer> {
                 completionHandler(self.responseSerializer.deserialize(objectToJSON(value)), nil)
             }
         }
+
         
         return self
     }
@@ -95,7 +96,7 @@ public enum CallError : CustomStringConvertible {
     case RateLimitError
     case HTTPError(Int?, String?, String?)
     case RouteError(Array<String>, String?)
-    case OSError(ErrorType?)
+    case OSError(Error?)
     
     public var description : String {
         switch self {
@@ -150,6 +151,6 @@ public enum CallError : CustomStringConvertible {
     }
 }
 
-func utf8Decode(data: NSData) -> String {
-    return NSString(data: data, encoding: NSUTF8StringEncoding)! as String
+func utf8Decode(data: Data) -> String {
+    return NSString(data: data, encoding: String.Encoding.utf8.rawValue)! as String
 }
