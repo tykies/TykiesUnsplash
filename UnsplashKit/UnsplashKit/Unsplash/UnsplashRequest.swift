@@ -20,7 +20,9 @@ public class UnsplashRequest<RType : JSONSerializer> {
         let headers = client.additionalHeaders(authNeeded: auth)
         
 //        self.request = client.manager.request(.GET, url, parameters: params, encoding: ParameterEncoding.URL, headers: headers)
-        self.request = client.manager.request(url, method: HTTPMethod.get, parameters: params, encoding: ParameterEncoding.encode(url), headers: headers)
+        
+        self.request = client.manager.request(url, method: .get, parameters: params, encoding: URLEncoding.default, headers: headers)
+        
         
         request.resume()
     }
@@ -32,14 +34,18 @@ public class UnsplashRequest<RType : JSONSerializer> {
     }
     
     public func response(completionHandler: (RType.ValueType?, CallError?) -> Void) -> Self {
-        self.request.validate().responseJSON { response in
-            if (response.result.isFailure) {
-                completionHandler(nil, self.handleResponseError(response))
-            } else {
-                let value = response.result.value!
-                completionHandler(self.responseSerializer.deserialize(objectToJSON(value)), nil)
-            }
-        }
+
+        
+        
+//        self.request.validate().responseJSON { response in
+//            if (response.result.isFailure) {
+//                completionHandler(nil, self.handleResponseError(response))
+//            } else {
+//                let value = response.result.value!
+//                completionHandler(self.responseSerializer.deserialize(objectToJSON(value)), nil)
+//            }
+//        }
+
 
         
         return self

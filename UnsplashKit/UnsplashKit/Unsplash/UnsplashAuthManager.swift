@@ -96,7 +96,7 @@ public class UnsplashAuthManager {
         return components.url!
     }
     
-    private func accessTokenURL(code: String) -> URL {
+    private func accessTokenURL(_ code: String) -> URL {
         var components = URLComponents()
         components.scheme = "https"
         components.host = UnsplashAuthManager.host
