@@ -50,6 +50,6 @@ public class CurrentUserRoutes {
         if let i = instagramUsername {
             params["instagram_usernam"] = i as AnyObject
         }
-        return UnsplashRequest(client: self.client, method:.PUT, route: "/me", auth: true, params: params, responseSerializer: User.Serializer())
+        return UnsplashRequest(client: self.client, method:.put, route: "/me", auth: true, params: params, responseSerializer: User.Serializer())
     }
 }
