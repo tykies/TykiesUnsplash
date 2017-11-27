@@ -24,7 +24,20 @@ public class User {
     public let email : String?
     
     public init(
-        id: String?, username: String, name: String?, firstName: String?, lastName: String?, downloads: UInt32?, profilePhoto: ProfilePhotoURL?, portfolioURL: URL?, bio : String?, uploadsRemaining: UInt32?, instagramUsername : String?, location : String?, email : String?) {
+        id: String?,
+        username: String,
+        name: String?,
+        firstName: String?,
+        lastName: String?,
+        downloads: UInt32?,
+        profilePhoto: ProfilePhotoURL?,
+        portfolioURL: URL?,
+        bio : String?,
+        uploadsRemaining: UInt32?,
+        instagramUsername : String?,
+        location : String?,
+        email : String?) {
+        
         self.id = id;
         self.username = username;
         self.name = name
@@ -46,7 +59,10 @@ public class ProfilePhotoURL {
     public let small : URL
     public let custom : URL?
     
-    public init(large: URL, medium: URL, small: URL, custom: URL?) {
+    public init(large: URL,
+                medium: URL,
+                small: URL,
+                custom: URL?) {
         self.large = large
         self.medium = medium
         self.small = small
@@ -68,7 +84,13 @@ public class Collection {
     public let publishedAt : Date
     public let user : User
     
-    public init(id: UInt32, title: String, curated: Bool, coverPhoto: Photo, publishedAt: Date, user: User) {
+    public init(id: UInt32,
+                title: String,
+                curated: Bool,
+                coverPhoto: Photo,
+                publishedAt: Date,
+                user: User) {
+        
         self.id = id
         self.publishedAt = publishedAt
         self.user = user
@@ -115,7 +137,18 @@ public class Photo {
     public let likes : UInt32?
     public let location : Location?
     
-    public init(id: String, width: UInt32?, height: UInt32?, color: UIColor?, user: User?, url: PhotoURL, categories: Array<Category>?, exif: Exif?, downloads: UInt32?, likes: UInt32?, location: Location?) {
+    public init(id: String,
+                width: UInt32?,
+                height: UInt32?,
+                color: UIColor?,
+                user: User?,
+                url: PhotoURL,
+                categories: Array<Category>?,
+                exif: Exif?,
+                downloads: UInt32?,
+                likes: UInt32?,
+                location: Location?) {
+        
         self.id = id
         self.width = width;
         self.height = height;
@@ -136,7 +169,11 @@ public class PhotoURL {
     public let thumb : URL
     public let custom : URL?
     
-    public init(full: URL, regular: URL, small: URL, thumb: URL, custom: URL?) {
+    public init(full: URL,
+                regular: URL,
+                small: URL,
+                thumb: URL,
+                custom: URL?) {
         self.full = full
         self.regular = regular
         self.small = small
@@ -177,7 +214,12 @@ public class Exif {
     public let aperture : Double?
     public let focalLength : UInt32?
     public let iso : UInt32?
-    public init(make: String?, model: String?, exposureTime: Double?, aperture: Double?, focalLength: UInt32?, iso: UInt32?) {
+    public init(make: String?,
+                model: String?,
+                exposureTime: Double?,
+                aperture: Double?,
+                focalLength: UInt32?,
+                iso: UInt32?) {
         self.make = make
         self.model = model
         self.exposureTime = exposureTime
@@ -192,7 +234,11 @@ public class Location {
     public let positon: Position?
     public let name : String?
     public let confidential : Bool?
-    public init(city: String?=nil, country: String?=nil, position: Position?=nil, name: String?=nil, confidential: Bool?=nil) {
+    public init(city: String?=nil,
+                country: String?=nil,
+                position: Position?=nil,
+                name: String?=nil,
+                confidential: Bool?=nil) {
         self.city = city
         self.country = country
         self.positon = position

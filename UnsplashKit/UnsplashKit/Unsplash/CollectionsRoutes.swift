@@ -68,7 +68,11 @@ public class CollectionsRoutes {
         if isPrivate {
             params["private"] = "true" as AnyObject
         }
+<<<<<<< HEAD
         return UnsplashRequest(client: self.client, method: .post, route: "/collections", auth: true, params: params, responseSerializer: Collection.Serializer())
+=======
+        return UnsplashRequest(client: self.client, method: HTTPMethod.post, route: "/collections", auth: true, params: params, responseSerializer: Collection.Serializer())
+>>>>>>> a66b5ca0a818b6d199e41bbfcf745577e101197c
     }
     
     public func updateCollection(collectionId: UInt32, title: String?=nil, description: String?=nil, isPrivate: Bool=false) -> UnsplashRequest<Collection.Serializer> {
@@ -82,20 +86,33 @@ public class CollectionsRoutes {
         if isPrivate {
             params["private"] = "true" as AnyObject
         }
+<<<<<<< HEAD
         return UnsplashRequest(client: self.client, method: .put, route: "/collections/\(collectionId)", auth: true, params: params, responseSerializer: Collection.Serializer())
+=======
+        return UnsplashRequest(client: self.client, method: HTTPMethod.put, route: "/collections/\(collectionId)", auth: true, params: params, responseSerializer: Collection.Serializer())
+>>>>>>> a66b5ca0a818b6d199e41bbfcf745577e101197c
     }
     
     public func deleteCollection(collectionId: UInt32) -> UnsplashRequest<DeleteResultSerializer> {
         let params = ["id" : NSNumber(value: collectionId)]
+<<<<<<< HEAD
         return UnsplashRequest(client: self.client, method: .delete, route: "/collections/\(collectionId)", auth: true, params: params, responseSerializer: DeleteResultSerializer())
+=======
+        return UnsplashRequest(client: self.client, method: HTTPMethod.delete, route: "/collections/\(collectionId)", auth: true, params: params, responseSerializer: DeleteResultSerializer())
+>>>>>>> a66b5ca0a818b6d199e41bbfcf745577e101197c
     }
     
     public func addPhotoToCollection(collectionId: UInt32, photoId: String) -> UnsplashRequest<PhotoCollectionResult.Serializer> {
         let params = [
             "collection_id" : NSNumber(value: collectionId),
             "photo_id" : photoId
+<<<<<<< HEAD
             ] as [String : AnyObject]
         return UnsplashRequest(client: self.client, method: .post, route: "/collections/\(collectionId)/add", auth: true, params: params, responseSerializer: PhotoCollectionResult.Serializer())
+=======
+            ] as [String : Any]
+        return UnsplashRequest(client: self.client, method: HTTPMethod.post, route: "/collections/\(collectionId)/add", auth: true, params: params as [String : AnyObject], responseSerializer: PhotoCollectionResult.Serializer())
+>>>>>>> a66b5ca0a818b6d199e41bbfcf745577e101197c
     }
     
     public func removePhotoToCollection(collectionId: UInt32, photoId: UInt32) -> UnsplashRequest<DeleteResultSerializer> {
@@ -103,7 +120,11 @@ public class CollectionsRoutes {
             "collection_id" : NSNumber(value: collectionId),
             "photo_id" : NSNumber(value: photoId)
         ]
+<<<<<<< HEAD
         return UnsplashRequest(client: self.client, method: .delete, route: "/collections/\(collectionId)/remove", auth: true, params: params, responseSerializer: DeleteResultSerializer())
+=======
+        return UnsplashRequest(client: self.client, method: HTTPMethod.delete, route: "/collections/\(collectionId)/remove", auth: true, params: params, responseSerializer: DeleteResultSerializer())
+>>>>>>> a66b5ca0a818b6d199e41bbfcf745577e101197c
     }
     
 }

@@ -13,20 +13,32 @@ public class UnsplashRequest<RType : JSONSerializer> {
     let responseSerializer : RType
     let request : DataRequest
     
+<<<<<<< HEAD
     init(client: UnsplashClient, method: HTTPMethod, route: String, auth: Bool, params: [String : AnyObject]?, responseSerializer: RType) {
+=======
+    init(client: UnsplashClient, method: Alamofire.HTTPMethod, route: String, auth: Bool, params: [String : AnyObject]?, responseSerializer: RType) {
+>>>>>>> a66b5ca0a818b6d199e41bbfcf745577e101197c
         self.responseSerializer = responseSerializer
         
         let url = "\(client.host)\(route)"
         let headers = client.additionalHeaders(authNeeded: auth)
         
 //        self.request = client.manager.request(.GET, url, parameters: params, encoding: ParameterEncoding.URL, headers: headers)
+<<<<<<< HEAD
         self.request = client.manager.request(url, method: .get, parameters: params, encoding: URLEncoding.default, headers: headers)
+=======
+        self.request = client.manager.request(url, method: HTTPMethod.get, parameters: params, encoding: ParameterEncoding.encode(url), headers: headers)
+>>>>>>> a66b5ca0a818b6d199e41bbfcf745577e101197c
         
         request.resume()
     }
     
     convenience init(client: UnsplashClient, route: String, auth: Bool, params: [String : AnyObject]?, responseSerializer: RType) {
+<<<<<<< HEAD
         self.init(client: client, method: .get, route: route, auth: auth, params: params, responseSerializer: responseSerializer)
+=======
+        self.init(client: client, method: HTTPMethod.get, route: route, auth: auth, params: params, responseSerializer: responseSerializer)
+>>>>>>> a66b5ca0a818b6d199e41bbfcf745577e101197c
         
 
     }
@@ -43,6 +55,7 @@ public class UnsplashRequest<RType : JSONSerializer> {
                 completionHandler(self.responseSerializer.deserialize(objectToJSON(value as AnyObject)), nil)
             }
         }
+
         
         return self
     }
@@ -153,8 +166,13 @@ public enum CallError : CustomStringConvertible {
     }
 }
 
+<<<<<<< HEAD
 func utf8Decode(_ data: Data) -> String {
     
     return String(data: data, encoding: String.Encoding.utf8)!
 //    return NSString(data: data, encoding: String.Encoding.utf8.rawValue)! as String
+=======
+func utf8Decode(data: Data) -> String {
+    return NSString(data: data, encoding: String.Encoding.utf8.rawValue)! as String
+>>>>>>> a66b5ca0a818b6d199e41bbfcf745577e101197c
 }
