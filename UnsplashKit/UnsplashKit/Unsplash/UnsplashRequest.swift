@@ -11,28 +11,32 @@ import Alamofire
 
 public class UnsplashRequest<RType : JSONSerializer> {
     let responseSerializer : RType
-    let request : Alamofire.Request
+    let request : DataRequest
     
-    init(client: UnsplashClient, method: Alamofire.HTTPMethod, route: String, auth: Bool, params: [String : AnyObject]?, responseSerializer: RType) {
+    init(client: UnsplashClient, method: HTTPMethod, route: String, auth: Bool, params: [String : AnyObject]?, responseSerializer: RType) {
+
         self.responseSerializer = responseSerializer
         
         let url = "\(client.host)\(route)"
         let headers = client.additionalHeaders(authNeeded: auth)
         
 //        self.request = client.manager.request(.GET, url, parameters: params, encoding: ParameterEncoding.URL, headers: headers)
+
         
         self.request = client.manager.request(url, method: .get, parameters: params, encoding: URLEncoding.default, headers: headers)
-        
         
         request.resume()
     }
     
     convenience init(client: UnsplashClient, route: String, auth: Bool, params: [String : AnyObject]?, responseSerializer: RType) {
-        self.init(client: client, method: HTTPMethod.get, route: route, auth: auth, params: params, responseSerializer: responseSerializer)
+
+        self.init(client: client, method: .get, route: route, auth: auth, params: params, responseSerializer: responseSerializer)
+
         
 
     }
     
+
     public func response(completionHandler: (RType.ValueType?, CallError?) -> Void) -> Self {
 
         
@@ -46,12 +50,11 @@ public class UnsplashRequest<RType : JSONSerializer> {
 //            }
 //        }
 
-
         
         return self
     }
     
-    func handleResponseError(response: Response<AnyObject, NSError>) -> CallError {
+    func handleResponseError(_ response: DataResponse<Any>) -> CallError {
         let _response = response.response
         let data = response.data
         let error = response.result.error
@@ -76,12 +79,12 @@ public class UnsplashRequest<RType : JSONSerializer> {
                 let json = parseJSON(data!)
                 switch json {
                 case .Dictionary(let d):
-                    return .RouteError(ArraySerializer(StringSerializer()).deserialize(d["errors"]!), requestId)
+                    return .RouteError(ArraySerializer(StringSerializer()).deserialize(d["errors"]!) as! Array<String>, requestId)
                 default:
                     fatalError("Failed to parse error type")
                 }
             case 200:
-                return .OSError(error)
+                return .OSError(error as? Error)
             default:
                 return .HTTPError(code, "An error occurred.", requestId)
             }
@@ -157,6 +160,10 @@ public enum CallError : CustomStringConvertible {
     }
 }
 
-func utf8Decode(data: Data) -> String {
-    return NSString(data: data, encoding: String.Encoding.utf8.rawValue)! as String
+
+func utf8Decode(_ data: Data) -> String {
+    
+    return String(data: data, encoding: String.Encoding.utf8)!
+//    return NSString(data: data, encoding: String.Encoding.utf8.rawValue)! as String
 }
+

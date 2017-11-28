@@ -41,13 +41,12 @@ public class UnsplashAuthManager {
         self.scopes = scopes
     }
     
-    public func authorizeFromController(controller: UIViewController, completion:@escaping (UnsplashAccessToken?, NSError?) -> Void) {
+    public func authorizeFromController(controller: UIViewController, completion: @escaping (UnsplashAccessToken?, NSError?) -> Void) {
         let connectController = UnsplashConnectController(startURL: self.authURL(), dismissOnMatchURL: self.redirectURL)
         connectController.onWillDismiss = { didCancel in
             if (didCancel) {
                 completion(nil, Error.errorWithCode(code: .UserCanceledAuth, description: "User canceled authorization"))
                 
-
             }
         }
         connectController.onMatchedURL = { url in
@@ -57,22 +56,27 @@ public class UnsplashAuthManager {
         controller.present(navigationController, animated: true, completion: nil)
     }
     
-    private func retrieveAccessTokenFromURL(url: URL, completion: ((UnsplashAccessToken?, NSError?) -> Void)) {
-        let (code, error) = extractCodeFromRedirectURL(url: url)
+    private func retrieveAccessTokenFromURL(url: URL, completion: @escaping ((UnsplashAccessToken?, NSError?) -> Void)) {
+        let (code, error) = extractCodeFromRedirectURL(url)
         
         if let e = error {
             completion(nil, e)
             return
         }
-
         
-        Alamofire.request(.POST, accessTokenURL(code!)).validate().responseJSON { response in
+        Alamofire.request(accessTokenURL(code!),method: .get).validate().responseJSON { response in
             switch response.result {
-            case .Success(let value):
-                let token = UnsplashAccessToken(appId: self.appId, accessToken: value["access_token"]! as! String)
+            case .success(let value):
+
+                let tempValue = value as AnyObject
+                
+                let token = UnsplashAccessToken(appId: self.appId, accessToken: tempValue["access_token"]! as! String)
+//                Keychain.set(self.appId, value: token.accessToken)
+                
                 Keychain.set(self.appId, value: token.accessToken)
+                
                 completion(token, nil)
-            case .Failure(_):
+            case .failure(_):
                 let error = self.extractErrorFromData(response.data!)
                 completion(nil, error)
             }
@@ -112,7 +116,7 @@ public class UnsplashAuthManager {
         return components.url!
     }
     
-    private func extractCodeFromRedirectURL(url: URL) -> (String?, NSError?) {
+    private func extractCodeFromRedirectURL(_ url: URL) -> (String?, NSError?) {
         let pairs = url.queryPairs
         if let error = pairs["error"] {
 //            let desc = pairs["error_description"]?.stringByReplacingOccurrencesOfString("+", withString: " ").stringByRemovingPercentEncoding
@@ -126,7 +130,7 @@ public class UnsplashAuthManager {
         }
     }
     
-    private func extractErrorFromData(data: Data) -> NSError? {
+    private func extractErrorFromData(_ data: Data) -> NSError? {
         do {
             let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String:String]
             return Error.errorWithCodeString(codeString: json!["error"]!, description: json!["error_description"])
@@ -339,18 +343,19 @@ class Keychain {
         return queryDict as CFDictionary
     }
     
-    class func set(key: String, value: String) -> Bool {
+    class func set(_ key: String, value:  String) -> Bool {
         if let data = value.data(using: String.Encoding.utf8) {
-            return set(key: String, value: data)
+            return set(key: key, value: data)
+            
         } else {
             return false
         }
     }
     
-    class func set(key: String, value: NSData) -> Bool {
+    class func set(key: String, value: Data) -> Bool {
         let query = Keychain.queryWithDict(query: [
             (kSecAttrAccount as String): key as AnyObject,
-            (  kSecValueData as String): value
+            (  kSecValueData as String): value as AnyObject
             ])
         
         SecItemDelete(query)

@@ -47,8 +47,8 @@ public class PhotosRoutes {
     
     public func search(query: String, categoryIds: Array<UInt32>?=nil, page: UInt32?=nil, perPage: UInt32?=nil) -> UnsplashRequest<PhotosResult.Serializer> {
         var params : [String : AnyObject] = ["query" : query as AnyObject]
-        if let ids = categoryIds where ids.count > 0 {
-            let strIds = ids.map({"\($0)"}).joinWithSeparator(",")
+        if let ids = categoryIds, ids.count > 0 {
+            let strIds = ids.map({"\($0)"}).joined(separator: ",")
             params["category"] = strIds as AnyObject
         }
         if let page = page {
@@ -65,8 +65,8 @@ public class PhotosRoutes {
         if let q = query {
             params["query"] = q as AnyObject
         }
-        if let ids = categoryIds where ids.count > 0 {
-            let strIds = ids.map({"\($0)"}).joinWithSeparator(",")
+        if let ids = categoryIds, ids.count > 0 {
+            let strIds = ids.map({"\($0)"}).joined(separator: ",")
             params["category"] = strIds as AnyObject
         }
         if featured != nil && featured! {
@@ -90,7 +90,9 @@ public class PhotosRoutes {
         let data = UIImageJPEGRepresentation(photo, 0.7)
         var params = [String : AnyObject]()
 //        params["photo"] = data!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-        params["photo"] = data?.base64EncodedString(options: .lineLength64Characters) as AnyObject
+        
+        params["photo"] = data!.base64EncodedString(options: .lineLength64Characters) as AnyObject
+
         if let l = location {
             var locationParams = [String : AnyObject]()
             if l.city != nil { locationParams["city"] = l.city as AnyObject }
