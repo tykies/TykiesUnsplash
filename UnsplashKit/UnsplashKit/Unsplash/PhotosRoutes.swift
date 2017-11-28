@@ -90,12 +90,9 @@ public class PhotosRoutes {
         let data = UIImageJPEGRepresentation(photo, 0.7)
         var params = [String : AnyObject]()
 //        params["photo"] = data!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-<<<<<<< HEAD
         
         params["photo"] = data!.base64EncodedString(options: .lineLength64Characters) as AnyObject
-=======
-        params["photo"] = data?.base64EncodedString(options: .lineLength64Characters) as AnyObject
->>>>>>> a66b5ca0a818b6d199e41bbfcf745577e101197c
+
         if let l = location {
             var locationParams = [String : AnyObject]()
             if l.city != nil { locationParams["city"] = l.city as AnyObject }
