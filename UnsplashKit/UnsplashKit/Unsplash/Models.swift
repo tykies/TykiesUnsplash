@@ -57,16 +57,15 @@ public class ProfilePhotoURL {
     public let large : URL
     public let medium : URL
     public let small : URL
-    public let custom : URL?
+//    public let custom : URL?
     
     public init(large: URL,
                 medium: URL,
-                small: URL,
-                custom: URL?) {
+                small: URL) {
         self.large = large
         self.medium = medium
         self.small = small
-        self.custom = custom
+//        self.custom = custom
     }
 }
 public class CollectionsResult {

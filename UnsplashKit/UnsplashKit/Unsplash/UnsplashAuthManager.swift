@@ -37,11 +37,12 @@ public class UnsplashAuthManager {
     public init(appId: String, secret: String, scopes: [String]=UnsplashAuthManager.publicScope) {
         self.appId = appId
         self.secret = secret
-        self.redirectURL = URL(string: "unsplash-\(self.appId)://token")!
+//        self.redirectURL = URL(string: "unsplash-\(self.appId)://token")!
+        self.redirectURL = URL(string: "susuyan.com")!
         self.scopes = scopes
     }
     
-    public func authorizeFromController(controller: UIViewController, completion: @escaping (UnsplashAccessToken?, NSError?) -> Void) {
+    public func authorizeFromController(_ controller: UIViewController, completion: @escaping (UnsplashAccessToken?, NSError?) -> Void) {
         let connectController = UnsplashConnectController(startURL: self.authURL(), dismissOnMatchURL: self.redirectURL)
         connectController.onWillDismiss = { didCancel in
             if (didCancel) {
@@ -71,7 +72,6 @@ public class UnsplashAuthManager {
                 let tempValue = value as AnyObject
                 
                 let token = UnsplashAccessToken(appId: self.appId, accessToken: tempValue["access_token"]! as! String)
-//                Keychain.set(self.appId, value: token.accessToken)
                 
                 Keychain.set(self.appId, value: token.accessToken)
                 
@@ -119,7 +119,7 @@ public class UnsplashAuthManager {
     private func extractCodeFromRedirectURL(_ url: URL) -> (String?, NSError?) {
         let pairs = url.queryPairs
         if let error = pairs["error"] {
-//            let desc = pairs["error_description"]?.stringByReplacingOccurrencesOfString("+", withString: " ").stringByRemovingPercentEncoding
+
             let desc = pairs["error_description"]?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding
             
             
@@ -146,6 +146,7 @@ public class UnsplashAuthManager {
         return nil
     }
     
+    @discardableResult
     public func clearAccessToken() -> Bool {
         return Keychain.clear()
     }
@@ -343,6 +344,7 @@ class Keychain {
         return queryDict as CFDictionary
     }
     
+    @discardableResult
     class func set(_ key: String, value:  String) -> Bool {
         if let data = value.data(using: String.Encoding.utf8) {
             return set(key: key, value: data)

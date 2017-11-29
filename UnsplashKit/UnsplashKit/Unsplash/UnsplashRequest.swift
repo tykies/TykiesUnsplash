@@ -36,19 +36,17 @@ public class UnsplashRequest<RType : JSONSerializer> {
 
     }
     
-
-    public func response(completionHandler: (RType.ValueType?, CallError?) -> Void) -> Self {
-
+    @discardableResult
+    public func response(_ completionHandler: @escaping (RType.ValueType?, CallError?) -> Void) -> Self {
         
-        
-//        self.request.validate().responseJSON { response in
-//            if (response.result.isFailure) {
-//                completionHandler(nil, self.handleResponseError(response))
-//            } else {
-//                let value = response.result.value!
-//                completionHandler(self.responseSerializer.deserialize(objectToJSON(value)), nil)
-//            }
-//        }
+        self.request.validate().responseJSON { response in
+            if (response.result.isFailure) {
+                completionHandler(nil, self.handleResponseError(response))
+            } else {
+                let value = response.result.value!
+                completionHandler(self.responseSerializer.deserialize(SerializeUtil.objectToJSON(value as AnyObject)), nil)
+            }
+        }
 
         
         return self
@@ -76,10 +74,10 @@ public class UnsplashRequest<RType : JSONSerializer> {
             case 429:
                 return .RateLimitError
             case 403, 404, 409:
-                let json = parseJSON(data!)
+                let json = SerializeUtil.parseJSON(data!)
                 switch json {
-                case .Dictionary(let d):
-                    return .RouteError(ArraySerializer(StringSerializer()).deserialize(d["errors"]!) as! Array<String>, requestId)
+                case .dictionary(let d):
+                    return .RouteError(ArraySerializer(StringSerializer()).deserialize(d["errors"]!) , requestId)
                 default:
                     fatalError("Failed to parse error type")
                 }

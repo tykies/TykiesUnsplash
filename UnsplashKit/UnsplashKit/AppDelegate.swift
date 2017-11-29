@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -17,6 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        Unsplash.setUpWithAppId("b92a1ed28e17951c10ee36a60476885748856ea38631ad7d89a9499ba4e5ef07", secret: "146a458d31ac5942ad2d9af7ab031c8cd1e9e0cf5e44e20367e66e36771bae04", scopes: UnsplashAuthManager.allScopes)
+        
         return true
     }
 

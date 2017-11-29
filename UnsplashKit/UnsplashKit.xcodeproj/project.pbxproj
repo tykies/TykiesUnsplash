@@ -8,10 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		0EF8F59A4C9C1239FE8B849C /* Pods_UnsplashKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8809DA77DBB02684B4097235 /* Pods_UnsplashKit.framework */; };
+		10C6C81F1FCD442C0098932C /* PhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C6C81C1FCD442B0098932C /* PhotosViewController.swift */; };
+		10C6C8201FCD442C0098932C /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C6C81D1FCD442B0098932C /* ProfileViewController.swift */; };
+		10C6C8211FCD442C0098932C /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C6C81E1FCD442C0098932C /* ImageCell.swift */; };
 		55C7683C3344BEDB407F4396 /* Pods_UnsplashKitUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6155EFE10968DC848DB127BF /* Pods_UnsplashKitUITests.framework */; };
 		92EBD75B51630B6AE18C766D /* Pods_UnsplashKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4AAEA64655F04FB502A818 /* Pods_UnsplashKitTests.framework */; };
 		A148C9B41FB3EA9E00C2AB31 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A148C9B31FB3EA9E00C2AB31 /* AppDelegate.swift */; };
-		A148C9B61FB3EA9E00C2AB31 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A148C9B51FB3EA9E00C2AB31 /* ViewController.swift */; };
 		A148C9B91FB3EA9E00C2AB31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A148C9B71FB3EA9E00C2AB31 /* Main.storyboard */; };
 		A148C9BB1FB3EA9E00C2AB31 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A148C9BA1FB3EA9E00C2AB31 /* Assets.xcassets */; };
 		A148C9BE1FB3EA9E00C2AB31 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A148C9BC1FB3EA9E00C2AB31 /* LaunchScreen.storyboard */; };
@@ -51,6 +53,9 @@
 
 /* Begin PBXFileReference section */
 		0994F84992DFA22863667E3B /* Pods-UnsplashKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnsplashKitTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-UnsplashKitTests/Pods-UnsplashKitTests.release.xcconfig"; sourceTree = "<group>"; };
+		10C6C81C1FCD442B0098932C /* PhotosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewController.swift; sourceTree = "<group>"; };
+		10C6C81D1FCD442B0098932C /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		10C6C81E1FCD442C0098932C /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
 		2B4AAEA64655F04FB502A818 /* Pods_UnsplashKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnsplashKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CA6E99706870C6DFFDD896C /* Pods-UnsplashKitUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnsplashKitUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnsplashKitUITests/Pods-UnsplashKitUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		6155EFE10968DC848DB127BF /* Pods_UnsplashKitUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnsplashKitUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,7 +65,6 @@
 		8809DA77DBB02684B4097235 /* Pods_UnsplashKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnsplashKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A148C9B01FB3EA9E00C2AB31 /* UnsplashKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UnsplashKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A148C9B31FB3EA9E00C2AB31 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A148C9B51FB3EA9E00C2AB31 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A148C9B81FB3EA9E00C2AB31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A148C9BA1FB3EA9E00C2AB31 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A148C9BD1FB3EA9E00C2AB31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -155,7 +159,9 @@
 			children = (
 				A148C9E11FB3EAB800C2AB31 /* Unsplash */,
 				A148C9B31FB3EA9E00C2AB31 /* AppDelegate.swift */,
-				A148C9B51FB3EA9E00C2AB31 /* ViewController.swift */,
+				10C6C81E1FCD442C0098932C /* ImageCell.swift */,
+				10C6C81C1FCD442B0098932C /* PhotosViewController.swift */,
+				10C6C81D1FCD442B0098932C /* ProfileViewController.swift */,
 				A148C9B71FB3EA9E00C2AB31 /* Main.storyboard */,
 				A148C9BA1FB3EA9E00C2AB31 /* Assets.xcassets */,
 				A148C9BC1FB3EA9E00C2AB31 /* LaunchScreen.storyboard */,
@@ -513,10 +519,12 @@
 				A1A33CAC1FC00E6300FD88EA /* CategoriesRoutes.swift in Sources */,
 				A1A33CB81FC0127B00FD88EA /* Serializers.swift in Sources */,
 				A1A33CB41FC011EB00FD88EA /* Models.swift in Sources */,
+				10C6C8211FCD442C0098932C /* ImageCell.swift in Sources */,
+				10C6C8201FCD442C0098932C /* ProfileViewController.swift in Sources */,
 				A1A33CAE1FC00E9500FD88EA /* UnsplashRequest.swift in Sources */,
 				A1A33CA81FC00D6000FD88EA /* UnsplashClient.swift in Sources */,
-				A148C9B61FB3EA9E00C2AB31 /* ViewController.swift in Sources */,
 				A148CA001FB3F41000C2AB31 /* UnsplashAuthManager.swift in Sources */,
+				10C6C81F1FCD442C0098932C /* PhotosViewController.swift in Sources */,
 				A148C9B41FB3EA9E00C2AB31 /* AppDelegate.swift in Sources */,
 				A1A33CB01FC00EA700FD88EA /* UnsplashUtil.swift in Sources */,
 				A1A33CB61FC0123500FD88EA /* PhotosRoutes.swift in Sources */,
