@@ -38,7 +38,7 @@ public class UnsplashAuthManager {
         self.appId = appId
         self.secret = secret
 //        self.redirectURL = URL(string: "unsplash-\(self.appId)://token")!
-        self.redirectURL = URL(string: "susuyan.com")!
+        self.redirectURL = URL(string: "http://susuyan.com")!
         self.scopes = scopes
     }
     
@@ -184,7 +184,10 @@ class UnsplashConnectController : UIViewController, WKNavigationDelegate {
         
         self.view.backgroundColor = UIColor.white
         
-        self.cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: Selector(("cancel:")))
+//        self.cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: Selector(("cancel:")))
+        
+//        self.cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: Selector(("cancel:")))
+        self.cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancel(sender:)))
         self.navigationItem.rightBarButtonItem = self.cancelButton
     }
     
@@ -230,7 +233,7 @@ class UnsplashConnectController : UIViewController, WKNavigationDelegate {
         webView.goBack()
     }
     
-    func cancel(sender: AnyObject?) {
+    @objc func cancel(sender: AnyObject?) {
         dismiss(true, animated: (sender != nil))
     }
     
