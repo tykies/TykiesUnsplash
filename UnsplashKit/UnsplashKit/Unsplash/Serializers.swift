@@ -320,13 +320,13 @@ extension User {
                 let lastName = StringSerializer().deserialize(dict["last_name"]!)
 //                let downloads = UInt32Serializer().deserialize((dict["downloads"])!)
                 let profilePhoto = ProfilePhotoURL.Serializer().deserialize(dict["profile_image"]!)
-                let portfolioURL = NSURLSerializer().deserialize(dict["portfolio_url"]!)
+//                let portfolioURL = NSURLSerializer().deserialize(dict["portfolio_url"]!)
                 let bio = StringSerializer().deserialize(dict["bio"]!)
 //                let uploadsRemaining = UInt32Serializer().deserialize(dict["uploads_remaining"]!)
 //                let instagramUsername = StringSerializer().deserialize(dict["instagram_username"]!)
                 let location = StringSerializer().deserialize(dict["location"]!)
 //                let email = StringSerializer().deserialize(dict["email"]!)
-                return User(id: id, username: username, name: name, firstName: firstName, lastName: lastName, downloads: nil, profilePhoto: profilePhoto, portfolioURL: portfolioURL, bio: bio, uploadsRemaining: nil, instagramUsername: nil, location: location, email: nil)
+                return User(id: id, username: username, name: name, firstName: firstName, lastName: lastName, downloads: nil, profilePhoto: profilePhoto, portfolioURL: nil, bio: bio, uploadsRemaining: nil, instagramUsername: nil, location: location, email: nil)
             default:
                 fatalError("error deserializing")
             }

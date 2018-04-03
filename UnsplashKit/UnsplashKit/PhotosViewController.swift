@@ -35,7 +35,7 @@ class PhotosViewController: UICollectionViewController {
         
         setUpInstanceProperties()
         setUpCollectionView()
-//        loadImages()
+        loadImages()
     }
     
     // MARK: Private - Setup
@@ -50,14 +50,28 @@ class PhotosViewController: UICollectionViewController {
     }
     
     private func loadImages() {
-        self.client!.photos.findPhotos().response({ response, error in
+//        self.client!.photos.findPhotos().response({ response, error in
+//            if let e = error {
+//                let controller = UIAlertController(title: "Unsplash Error", message: e.description, preferredStyle: .alert)
+//                let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+//                controller.addAction(action)
+//                self.present(controller, animated: true, completion: nil)
+//            } else {
+//                self.photos = response!.photos
+//                self.collectionView!.reloadData()
+//            }
+//        })
+        
+        
+        self.client!.photos.random().response({ (response, error) in
             if let e = error {
                 let controller = UIAlertController(title: "Unsplash Error", message: e.description, preferredStyle: .alert)
                 let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
                 controller.addAction(action)
                 self.present(controller, animated: true, completion: nil)
             } else {
-                self.photos = response!.photos
+
+                
                 self.collectionView!.reloadData()
             }
         })

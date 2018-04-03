@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0EF8F59A4C9C1239FE8B849C /* Pods_UnsplashKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8809DA77DBB02684B4097235 /* Pods_UnsplashKit.framework */; };
+		1098AD592061032A006E86B6 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1098AD5820610329006E86B6 /* ExternalAccessory.framework */; };
 		10C6C81F1FCD442C0098932C /* PhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C6C81C1FCD442B0098932C /* PhotosViewController.swift */; };
 		10C6C8201FCD442C0098932C /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C6C81D1FCD442B0098932C /* ProfileViewController.swift */; };
 		10C6C8211FCD442C0098932C /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C6C81E1FCD442C0098932C /* ImageCell.swift */; };
@@ -53,6 +54,8 @@
 
 /* Begin PBXFileReference section */
 		0994F84992DFA22863667E3B /* Pods-UnsplashKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnsplashKitTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-UnsplashKitTests/Pods-UnsplashKitTests.release.xcconfig"; sourceTree = "<group>"; };
+		1098AD5820610329006E86B6 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
+		1098AD5A2061032A006E86B6 /* UnsplashKit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UnsplashKit.entitlements; sourceTree = "<group>"; };
 		10C6C81C1FCD442B0098932C /* PhotosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewController.swift; sourceTree = "<group>"; };
 		10C6C81D1FCD442B0098932C /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		10C6C81E1FCD442C0098932C /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
@@ -96,6 +99,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1098AD592061032A006E86B6 /* ExternalAccessory.framework in Frameworks */,
 				0EF8F59A4C9C1239FE8B849C /* Pods_UnsplashKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -157,6 +161,7 @@
 		A148C9B21FB3EA9E00C2AB31 /* UnsplashKit */ = {
 			isa = PBXGroup;
 			children = (
+				1098AD5A2061032A006E86B6 /* UnsplashKit.entitlements */,
 				A148C9E11FB3EAB800C2AB31 /* Unsplash */,
 				A148C9B31FB3EA9E00C2AB31 /* AppDelegate.swift */,
 				10C6C81E1FCD442C0098932C /* ImageCell.swift */,
@@ -211,6 +216,7 @@
 		E83BD22221373B5903125381 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1098AD5820610329006E86B6 /* ExternalAccessory.framework */,
 				8809DA77DBB02684B4097235 /* Pods_UnsplashKit.framework */,
 				2B4AAEA64655F04FB502A818 /* Pods_UnsplashKitTests.framework */,
 				6155EFE10968DC848DB127BF /* Pods_UnsplashKitUITests.framework */,
@@ -296,6 +302,11 @@
 					A148C9AF1FB3EA9E00C2AB31 = {
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.WAC = {
+								enabled = 1;
+							};
+						};
 					};
 					A148C9C31FB3EA9E00C2AB31 = {
 						CreatedOnToolsVersion = 9.0;
@@ -696,6 +707,7 @@
 			baseConfigurationReference = 81EE8800C2F8E4D719903C29 /* Pods-UnsplashKit.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = UnsplashKit/UnsplashKit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = DJD38W5HE9;
 				INFOPLIST_FILE = UnsplashKit/Info.plist;
@@ -712,6 +724,7 @@
 			baseConfigurationReference = 84410770BA1A2C0D264674F9 /* Pods-UnsplashKit.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = UnsplashKit/UnsplashKit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = DJD38W5HE9;
 				INFOPLIST_FILE = UnsplashKit/Info.plist;

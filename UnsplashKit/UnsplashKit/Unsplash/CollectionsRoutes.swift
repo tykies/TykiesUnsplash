@@ -11,7 +11,6 @@ import Alamofire
 
 public class CollectionsRoutes {
     
-    
     let client : UnsplashClient
     
     public init(client: UnsplashClient) {

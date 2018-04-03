@@ -19,10 +19,7 @@ public class UnsplashRequest<RType : JSONSerializer> {
         
         let url = "\(client.host)\(route)"
         let headers = client.additionalHeaders(authNeeded: auth)
-        
-//        self.request = client.manager.request(.GET, url, parameters: params, encoding: ParameterEncoding.URL, headers: headers)
 
-        
         self.request = client.manager.request(url, method: .get, parameters: params, encoding: URLEncoding.default, headers: headers)
         
         request.resume()

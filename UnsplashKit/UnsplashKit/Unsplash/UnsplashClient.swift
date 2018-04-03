@@ -29,7 +29,7 @@ public class UnsplashClient {
         self.manager = manager
         self.collections = CollectionsRoutes(client: self)
         self.categories = CategoriesRoutes(client: self)
-        self.stats = StatsRoutes(client: self)
+        self.stats = StatsRoutes(client: self)   
         self.photos = PhotosRoutes(client: self)
         self.users = UsersRoutes(client: self)
         self.currentUser = CurrentUserRoutes(client: self)
