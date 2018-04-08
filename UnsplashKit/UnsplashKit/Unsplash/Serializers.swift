@@ -90,7 +90,7 @@ open class SerializeUtil {
 
 public protocol JSONSerializer {
     associatedtype ValueType
-//    func serialize(_: ValueType) -> JSON
+    func serialize(_: ValueType) -> JSON
     func deserialize(_: JSON) -> ValueType
 }
 
@@ -119,14 +119,158 @@ open class ArraySerializer<T : JSONSerializer> : JSONSerializer {
         self.elementSerializer = elementSerializer
     }
     
-//    open func serialize(_ arr: Array<T.ValueType>) -> JSON {
-//        return .array(arr.map { self.elementSerializer.serialize($0) })
-//    }
+    open func serialize(_ arr: Array<T.ValueType>) -> JSON {
+        return .array(arr.map { self.elementSerializer.serialize($0) })
+    }
     
     public func deserialize(_ json : JSON) -> Array<T.ValueType> {
         switch json {
         case .array(let arr):
             return arr.map { self.elementSerializer.deserialize($0) }
+        default:
+            fatalError("Type error deserializing")
+        }
+    }
+}
+
+open class StringSerializer: JSONSerializer {
+    open func serialize(_ value: String) -> JSON {
+        return .str(value)
+    }
+    
+    open func deserialize(_ json: JSON) -> String {
+        switch (json) {
+        case .str(let s):
+            return s
+        default:
+            fatalError("Type error deserializing")
+        }
+    }
+}
+
+open class NSDateSerializer: JSONSerializer {
+    
+    var dateFormatter: DateFormatter
+    
+    fileprivate func convertFormat(_ format: String) -> String? {
+        func symbolForToken(_ token: String) -> String {
+            switch token {
+            case "%a": // Weekday as locale’s abbreviated name.
+                return "EEE"
+            case "%A": // Weekday as locale’s full name.
+                return "EEEE"
+            case "%w": // Weekday as a decimal number, where 0 is Sunday and 6 is Saturday. 0, 1, ..., 6
+                return "ccccc"
+            case "%d": // Day of the month as a zero-padded decimal number. 01, 02, ..., 31
+                return "dd"
+            case "%b": // Month as locale’s abbreviated name.
+                return "MMM"
+            case "%B": // Month as locale’s full name.
+                return "MMMM"
+            case "%m": // Month as a zero-padded decimal number. 01, 02, ..., 12
+                return "MM"
+            case "%y": // Year without century as a zero-padded decimal number. 00, 01, ..., 99
+                return "yy"
+            case "%Y": // Year with century as a decimal number. 1970, 1988, 2001, 2013
+                return "yyyy"
+            case "%H": // Hour (24-hour clock) as a zero-padded decimal number. 00, 01, ..., 23
+                return "HH"
+            case "%I": // Hour (12-hour clock) as a zero-padded decimal number. 01, 02, ..., 12
+                return "hh"
+            case "%p": // Locale’s equivalent of either AM or PM.
+                return "a"
+            case "%M": // Minute as a zero-padded decimal number. 00, 01, ..., 59
+                return "mm"
+            case "%S": // Second as a zero-padded decimal number. 00, 01, ..., 59
+                return "ss"
+            case "%f": // Microsecond as a decimal number, zero-padded on the left. 000000, 000001, ..., 999999
+                return "SSSSSS"
+            case "%z": // UTC offset in the form +HHMM or -HHMM (empty string if the the object is naive). (empty), +0000, -0400, +1030
+                return "Z"
+            case "%Z": // Time zone name (empty string if the object is naive). (empty), UTC, EST, CST
+                return "z"
+            case "%j": // Day of the year as a zero-padded decimal number. 001, 002, ..., 366
+                return "DDD"
+            case "%U": // Week number of the year (Sunday as the first day of the week) as a zero padded decimal number. All days in a new year preceding the first Sunday are considered to be in week 0. 00, 01, ..., 53 (6)
+                return "ww"
+            case "%W": // Week number of the year (Monday as the first day of the week) as a decimal number. All days in a new year preceding the first Monday are considered to be in week 0. 00, 01, ..., 53 (6)
+                return "ww" // one of these can't be right
+            case "%c": // Locale’s appropriate date and time representation.
+                return "" // unsupported
+            case "%x": // Locale’s appropriate date representation.
+                return "" // unsupported
+            case "%X": // Locale’s appropriate time representation.
+                return "" // unsupported
+            case "%%": // A literal '%' character.
+                return "%"
+            default:
+                return ""
+            }
+        }
+        var newFormat = ""
+        var inQuotedText = false
+        var i = format.startIndex
+        while i < format.endIndex {
+            if format[i] == "%" {
+                if format.index(after: i) >= format.endIndex {
+                    return nil
+                }
+                i = format.index(after: i)
+                let token = "%\(format[i])"
+                if inQuotedText {
+                    newFormat += "'"
+                    inQuotedText = false
+                }
+                newFormat += symbolForToken(token)
+            } else {
+                if "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".characters.contains(format[i]) {
+                    if !inQuotedText {
+                        newFormat += "'"
+                        inQuotedText = true
+                    }
+                } else if format[i] == "'" {
+                    newFormat += "'"
+                }
+                newFormat += String(format[i])
+            }
+            i = format.index(after: i)
+        }
+        if inQuotedText {
+            newFormat += "'"
+        }
+        return newFormat
+    }
+    
+    
+    init(_ dateFormat: String) {
+        self.dateFormatter = DateFormatter()
+        self.dateFormatter.timeZone = TimeZone(identifier: "UTC")
+        self.dateFormatter.locale = NSLocale(localeIdentifier:"en_US_POSIX") as Locale?
+        dateFormatter.dateFormat = self.convertFormat(dateFormat)
+    }
+    open func serialize(_ value: Date) -> JSON {
+        return .str(self.dateFormatter.string(from: value))
+    }
+    
+    open func deserialize(_ json: JSON) -> Date {
+        switch json {
+        case .str(let s):
+            return self.dateFormatter.date(from: s)!
+        default:
+            fatalError("Type error deserializing")
+        }
+    }
+}
+
+
+open class BoolSerializer: JSONSerializer {
+    open func serialize(_ value: Bool) -> JSON {
+        return .number(NSNumber(value: value as Bool))
+    }
+    open func deserialize(_ json: JSON) -> Bool {
+        switch json {
+        case .number(let b):
+            return b.boolValue
         default:
             fatalError("Type error deserializing")
         }
@@ -192,19 +336,7 @@ open class UInt32Serializer: JSONSerializer {
     }
 }
 
-open class BoolSerializer: JSONSerializer {
-    open func serialize(_ value: Bool) -> JSON {
-        return .number(NSNumber(value: value as Bool))
-    }
-    open func deserialize(_ json: JSON) -> Bool {
-        switch json {
-        case .number(let b):
-            return b.boolValue
-        default:
-            fatalError("Type error deserializing")
-        }
-    }
-}
+
 
 open class NSDataSerializer: JSONSerializer {
     open func serialize(_ value: Data) -> JSON {
@@ -236,26 +368,66 @@ open class DoubleSerializer: JSONSerializer {
     }
 }
 
-open class StringSerializer: JSONSerializer {
-    open func serialize(_ value: String) -> JSON {
-        return .str(value)
+
+open class NullableSerializer<T: JSONSerializer>: JSONSerializer {
+    
+    var internalSerializer: T
+    
+    init(_ serializer: T) {
+        self.internalSerializer = serializer
     }
     
-    open func deserialize(_ json: JSON) -> String {
-        switch (json) {
-        case .str(let s):
-            return s
+    open func serialize(_ value: Optional<T.ValueType>) -> JSON {
+        if let v = value {
+            return internalSerializer.serialize(v)
+        } else {
+            return .null
+        }
+    }
+    
+    open func deserialize(_ json: JSON) -> Optional<T.ValueType> {
+        switch json {
+        case .null:
+            return nil
         default:
-            fatalError("Type error deserializing")
+            return internalSerializer.deserialize(json)
         }
     }
 }
 
+struct Serialization {
+    static var _StringSerializer = StringSerializer()
+    static var _BoolSerializer = BoolSerializer()
+    static var _UInt64Serializer = UInt64Serializer()
+    static var _UInt32Serializer = UInt32Serializer()
+    static var _Int64Serializer = Int64Serializer()
+    static var _Int32Serializer = Int32Serializer()
+    
+    static var _VoidSerializer = VoidSerializer()
+    static var _NSDataSerializer = NSDataSerializer()
+    static var _DoubleSerializer = DoubleSerializer()
+    
+    static func getFields(_ json: JSON) -> [String: JSON] {
+        switch json {
+        case .dictionary(let dict):
+            return dict
+        default:
+            fatalError("Type error")
+        }
+    }
+    
+    static func getTag(_ d: [String: JSON]) -> String {
+        return _StringSerializer.deserialize(d[".tag"]!)
+    }
+    
+}
+
+
 // Color comes in the following format: #000000
 open class UIColorSerializer : JSONSerializer {
-//    open func serialize(_ value: UIColor) -> JSON {
-//        return .number(NSNumber())
-//    }
+    open func serialize(_ value: UIColor) -> JSON {
+        return .number(NSNumber())
+    }
     
     public func deserialize(_ json: JSON) -> UIColor {
         switch (json) {
@@ -266,7 +438,11 @@ open class UIColorSerializer : JSONSerializer {
         }
     }
 }
-public class NSURLSerializer : JSONSerializer {
+public class URLSerializer : JSONSerializer {
+    public func serialize(_ value: URL) -> JSON {
+        return .str(value.path)
+    }
+    
     public func deserialize(_ json: JSON) -> URL {
         switch (json) {
         case .str(let s):
@@ -277,25 +453,13 @@ public class NSURLSerializer : JSONSerializer {
     }
 }
 
-public class NSDateSerializer : JSONSerializer {
-    var dateFormatter : DateFormatter
-    
-    init() {
-        self.dateFormatter = DateFormatter()
-        self.dateFormatter.timeZone = TimeZone(identifier: "UTC")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-    }
-    public func deserialize(_ json: JSON) -> Date {
-        switch json {
-        case .str(let s):
-            return self.dateFormatter.date(from: s)!
-        default:
-            fatalError("Type error deserializing")
-        }
-    }
-}
 public class DeleteResultSerializer : JSONSerializer {
-    init(){}
+    
+    public init() { }
+    open func serialize(_ value: Bool) -> JSON {
+        return .number(NSNumber(value: value as Bool))
+    }
+    
     public func deserialize(_ json: JSON) -> Bool {
         switch json {
         case .null:
@@ -309,7 +473,15 @@ public class DeleteResultSerializer : JSONSerializer {
 // MARK: Model Serializers
 extension User {
     public class Serializer : JSONSerializer {
-        public init() {}
+        public func serialize(_ value: User) -> JSON {
+            let output = [
+                "id": Serialization._StringSerializer.serialize(value.id!)
+            ]
+            
+            return .dictionary(output)
+        }
+        
+        
         public func deserialize(_ json: JSON) -> User {
             switch json {
             case .dictionary(let dict):
@@ -320,7 +492,7 @@ extension User {
                 let lastName = StringSerializer().deserialize(dict["last_name"]!)
 //                let downloads = UInt32Serializer().deserialize((dict["downloads"])!)
                 let profilePhoto = ProfilePhotoURL.Serializer().deserialize(dict["profile_image"]!)
-//                let portfolioURL = NSURLSerializer().deserialize(dict["portfolio_url"]!)
+//                let portfolioURL = URLSerializer().deserialize(dict["portfolio_url"]!)
                 let bio = StringSerializer().deserialize(dict["bio"]!)
 //                let uploadsRemaining = UInt32Serializer().deserialize(dict["uploads_remaining"]!)
 //                let instagramUsername = StringSerializer().deserialize(dict["instagram_username"]!)
@@ -337,14 +509,22 @@ extension User {
 
 extension ProfilePhotoURL {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: ProfilePhotoURL) -> JSON {
+            let output = [
+                "large": URLSerializer().serialize(value.large)
+            ]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> ProfilePhotoURL {
             switch json {
             case .dictionary(let dict):
-                let large = NSURLSerializer().deserialize(dict["large"] ?? .null)
-                let medium = NSURLSerializer().deserialize(dict["medium"] ?? .null)
-                let small = NSURLSerializer().deserialize(dict["small"] ?? .null)
-//                let custom = NSURLSerializer().deserialize(dict["custom"]!)
+                let large = URLSerializer().deserialize(dict["large"] ?? .null)
+                let medium = URLSerializer().deserialize(dict["medium"] ?? .null)
+                let small = URLSerializer().deserialize(dict["small"] ?? .null)
+//                let custom = URLSerializer().deserialize(dict["custom"] ?? .null)
                 return ProfilePhotoURL(large: large, medium: medium, small: small)
             default:
                 fatalError("error deserializing")
@@ -355,6 +535,14 @@ extension ProfilePhotoURL {
 
 extension CollectionsResult {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: CollectionsResult) -> JSON {
+            let output = [
+                "collections": ArraySerializer(Collection.Serializer()).serialize(value.collections)
+            ]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> CollectionsResult {
             switch json {
@@ -370,6 +558,14 @@ extension CollectionsResult {
 
 extension Collection {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: Collection) -> JSON {
+            let output = [
+                "id": Serialization._UInt32Serializer.serialize(value.id)
+            ]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> Collection {
             switch json {
@@ -378,7 +574,7 @@ extension Collection {
                 let title = StringSerializer().deserialize(dict["title"] ?? .null)
                 let curated = BoolSerializer().deserialize(dict["curated"] ?? .null)
                 let coverPhoto = Photo.Serializer().deserialize(dict["cover_photo"] ?? .null)
-                let publishedAt = NSDateSerializer().deserialize(dict["published_at"] ?? .null)
+                let publishedAt = NSDateSerializer("%Y-%m-%dT%H:%M:%SZ").deserialize(dict["published_at"] ?? .null)
                 let user = User.Serializer().deserialize(dict["user"] ?? .null)
                 return Collection(id: id, title: title, curated: curated, coverPhoto: coverPhoto, publishedAt: publishedAt, user: user)
             default:
@@ -390,6 +586,14 @@ extension Collection {
 
 extension PhotoCollectionResult {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: PhotoCollectionResult) -> JSON {
+            let output = [
+                "photo": Photo.Serializer().serialize(value.photo)
+            ]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> PhotoCollectionResult {
             switch json {
@@ -406,6 +610,14 @@ extension PhotoCollectionResult {
 
 extension PhotoUserResult {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: PhotoUserResult) -> JSON {
+            let output = [
+                "photo": Photo.Serializer().serialize(value.photo)
+            ]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> PhotoUserResult {
             switch json {
@@ -422,6 +634,14 @@ extension PhotoUserResult {
 
 extension Photo {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: Photo) -> JSON {
+            let output = [
+                "id": Serialization._StringSerializer.serialize(value.id)
+            ]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> Photo {
             switch json {
@@ -433,11 +653,11 @@ extension Photo {
                 let user = User.Serializer().deserialize(dict["user"]!)
                 let url = PhotoURL.Serializer().deserialize(dict["urls"] ?? .null)
                 let categories = ArraySerializer(Category.Serializer()).deserialize(dict["categories"]!)
-                let exif = Exif.Serializer().deserialize(dict["exif"]!)
-                let downloads = UInt32Serializer().deserialize(dict["downloads"]!)
+//                let exif = Exif.Serializer().deserialize(dict["exif"]!)
+                let downloads = UInt32Serializer().deserialize(dict["downloads"] ?? .number(0))
                 let likes = UInt32Serializer().deserialize(dict["likes"]!)
-                let location = Location.Serializer().deserialize(dict["location"]!)
-                return Photo(id: id, width: width, height: height, color: color, user: user, url: url, categories: categories, exif: exif, downloads: downloads, likes: likes, location: location)
+                let location = Location.Serializer().deserialize(dict["location"] ?? .null)
+                return Photo(id: id, width: width, height: height, color: color, user: user, url: url, categories: categories, downloads: downloads, likes: likes, location: location)
             default:
                 fatalError("error deserializing")
             }
@@ -447,6 +667,12 @@ extension Photo {
 
 extension PhotosResult {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: PhotosResult) -> JSON {
+            let output = [ "photos": ArraySerializer(Photo.Serializer()).serialize(value.photos) ]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> PhotosResult {
             switch json {
@@ -462,15 +688,24 @@ extension PhotosResult {
 
 extension PhotoURL {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: PhotoURL) -> JSON {
+            let output = [
+                "full": URLSerializer().serialize(value.full),
+
+            ]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> PhotoURL {
             switch json {
             case .dictionary(let dict):
-                let full = NSURLSerializer().deserialize(dict["full"] ?? .null)
-                let regular = NSURLSerializer().deserialize(dict["regular"] ?? .null)
-                let small = NSURLSerializer().deserialize(dict["small"] ?? .null)
-                let thumb = NSURLSerializer().deserialize(dict["thumb"] ?? .null)
-//                let custom = NSURLSerializer().deserialize(dict["custom"]!)
+                let full = URLSerializer().deserialize(dict["full"] ?? .null)
+                let regular = URLSerializer().deserialize(dict["regular"] ?? .null)
+                let small = URLSerializer().deserialize(dict["small"] ?? .null)
+                let thumb = URLSerializer().deserialize(dict["thumb"] ?? .null)
+//                let custom = URLSerializer().deserialize(dict["custom"]!)
                 return PhotoURL(full: full, regular: regular, small: small, thumb: thumb, custom: nil)
             default:
                 fatalError("error deserializing")
@@ -481,6 +716,18 @@ extension PhotoURL {
 
 extension Exif {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value : Exif) -> JSON {
+            
+            let output = [
+                "make":Serialization._StringSerializer.serialize(value.make!)
+                
+                
+            ]
+            
+            return .dictionary(output)
+            
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> Exif {
             switch json {
@@ -501,6 +748,16 @@ extension Exif {
 
 extension Location {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: Location) -> JSON {
+            let output = [
+                "position": Position.Serializer().serialize(value.positon!),
+                "city": Serialization._StringSerializer.serialize(value.city!),
+                "country": Serialization._StringSerializer.serialize(value.country!)
+            ]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> Location {
             switch json {
@@ -518,6 +775,15 @@ extension Location {
 
 extension Position {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: Position) -> JSON {
+            let output = [
+                "latitude": Serialization._DoubleSerializer.serialize(value.latitude),
+                "longitude": Serialization._DoubleSerializer.serialize(value.longitude)
+            ]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> Position {
             switch json {
@@ -535,6 +801,12 @@ extension Position {
 
 extension CategoriesResult {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: CategoriesResult) -> JSON {
+            let output = ["categories": ArraySerializer(Category.Serializer()).serialize(value.categories)]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> CategoriesResult {
             switch json {
@@ -550,6 +822,16 @@ extension CategoriesResult {
 
 extension Category {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value : Category) -> JSON {
+            let output = [
+                "id": Serialization._UInt32Serializer.serialize(value.id),
+                "title": Serialization._StringSerializer.serialize(value.title),
+                "photo_count": Serialization._UInt32Serializer.serialize(value.photoCount)
+                ]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> Category {
             switch json {
@@ -566,6 +848,14 @@ extension Category {
 }
 extension Stats {
     public class Serializer : JSONSerializer {
+        public func serialize(_ value: Stats) -> JSON {
+            let output = [
+            "photo_downloads":Serialization._UInt32Serializer.serialize(value.photoDownloads),
+            "batch_downloads": Serialization._UInt32Serializer.serialize(value.batchDownloads)]
+            
+            return .dictionary(output)
+        }
+        
         public init() {}
         public func deserialize(_ json: JSON) -> Stats {
             switch json {

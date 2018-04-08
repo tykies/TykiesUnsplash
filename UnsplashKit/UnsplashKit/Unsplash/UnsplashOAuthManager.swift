@@ -1,17 +1,30 @@
 //
-//  UnsplashAuthManager.swift
+//  UnsplashOAuthManager.swift
 //  UnsplashKit
 //
 //  Created by susuyan on 2017/11/9.
 //  Copyright © 2017年 susuyan. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import WebKit
 import Security
 import Alamofire
+import SafariServices
+import SystemConfiguration
 
-public class UnsplashAuthManager {
+
+public protocol SharedApplication {
+    func presentErrorMessage(_ message: String, title: String)
+    func presentErrorMessageWithHandlers(_ message: String, title: String, buttonHandlers: Dictionary<String, () -> Void>)
+    func presentPlatformSpecificAuth(_ authURL: URL) -> Bool
+    func presentAuthChannel(_ authURL: URL, tryIntercept: @escaping ((URL) -> Bool), cancelHandler: @escaping (() -> Void))
+    func presentExternalApp(_ url: URL)
+    func canPresentExternalApp(_ url: URL) -> Bool
+}
+
+public class UnsplashOAuthManager {
     
     private static let host = "unsplash.com"
     
@@ -23,21 +36,22 @@ public class UnsplashAuthManager {
         "read_photos",
         "write_photos",
         "write_likes",
+        "write_followers",
         "read_collections",
         "write_collections"
     ]
     
-    private let appId : String
+    private let access : String
     private let secret : String
     private let redirectURL : URL
-    private let scopes : [String]
+    private let scopes : Array<String>
     
-    public static var sharedAuthManager : UnsplashAuthManager!
+    open static var sharedOAuthManager : UnsplashOAuthManager!
     
-    public init(appId: String, secret: String, scopes: [String]=UnsplashAuthManager.publicScope) {
-        self.appId = appId
+    public init(access: String, secret: String, scopes: [String]=UnsplashOAuthManager.publicScope) {
+        self.access = access
         self.secret = secret
-//        self.redirectURL = URL(string: "unsplash-\(self.appId)://token")!
+//        self.redirectURL = URL(string: "unsplash-\(self.access)://token")!
         self.redirectURL = URL(string: "http://susuyan.com")!
         self.scopes = scopes
     }
@@ -65,15 +79,15 @@ public class UnsplashAuthManager {
             return
         }
         
-        Alamofire.request(accessTokenURL(code!),method: .get).validate().responseJSON { response in
+        Alamofire.request(accessTokenURL(code!),method: .post).validate().responseJSON { response in
             switch response.result {
             case .success(let value):
 
                 let tempValue = value as AnyObject
                 
-                let token = UnsplashAccessToken(appId: self.appId, accessToken: tempValue["access_token"]! as! String)
+                let token = UnsplashAccessToken(access: self.access, accessToken: tempValue["access_token"]! as! String)
                 
-                Keychain.set(self.appId, value: token.accessToken)
+                Keychain.set(self.access, value: token.accessToken)
                 
                 completion(token, nil)
             case .failure(_):
@@ -86,14 +100,12 @@ public class UnsplashAuthManager {
     private func authURL() -> URL {
         var components = URLComponents()
         components.scheme = "https"
-        components.host = UnsplashAuthManager.host
+        components.host = UnsplashOAuthManager.host
         components.path = "/oauth/authorize"
         
         components.queryItems = [
-            
-
             URLQueryItem(name: "response_type", value: "code") ,
-            URLQueryItem(name: "client_id", value: self.appId),
+            URLQueryItem(name: "client_id", value: self.access),
             URLQueryItem(name: "redirect_uri", value: self.redirectURL.absoluteString),
             URLQueryItem(name: "scope", value: self.scopes.joined(separator: "+")),
         ]
@@ -103,12 +115,11 @@ public class UnsplashAuthManager {
     private func accessTokenURL(_ code: String) -> URL {
         var components = URLComponents()
         components.scheme = "https"
-        components.host = UnsplashAuthManager.host
+        components.host = UnsplashOAuthManager.host
         components.path = "/oauth/token"
-        
         components.queryItems = [
             URLQueryItem(name: "grant_type", value: "authorization_code"),
-            URLQueryItem(name: "client_id", value: self.appId),
+            URLQueryItem(name: "client_id", value: self.access),
             URLQueryItem(name: "client_secret", value: self.secret),
             URLQueryItem(name: "redirect_uri", value: self.redirectURL.absoluteString),
             URLQueryItem(name: "code", value: code),
@@ -140,8 +151,8 @@ public class UnsplashAuthManager {
     }
     
     public func getAccessToken() -> UnsplashAccessToken? {
-        if let accessToken = Keychain.get(key: self.appId) {
-            return UnsplashAccessToken(appId: self.appId, accessToken: accessToken)
+        if let accessToken = Keychain.get(key: self.access) {
+            return UnsplashAccessToken(access: self.access, accessToken: accessToken)
         }
         return nil
     }
@@ -179,14 +190,8 @@ class UnsplashConnectController : UIViewController, WKNavigationDelegate {
         self.title = "Link to Unsplash"
         self.webView = WKWebView(frame: self.view.bounds)
         self.view.addSubview(self.webView)
-        
         self.webView.navigationDelegate = self
-        
         self.view.backgroundColor = UIColor.white
-        
-//        self.cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: Selector(("cancel:")))
-        
-//        self.cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: Selector(("cancel:")))
         self.cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancel(sender:)))
         self.navigationItem.rightBarButtonItem = self.cancelButton
     }
@@ -198,7 +203,6 @@ class UnsplashConnectController : UIViewController, WKNavigationDelegate {
 
         }
     }
-
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         if let url = navigationAction.request.url {
@@ -218,8 +222,7 @@ class UnsplashConnectController : UIViewController, WKNavigationDelegate {
     
     func dimissURLMatchesURL(url: URL) -> Bool {
         if (url.scheme == self.dismissOnMatchURL.scheme &&
-            url.host == self.dismissOnMatchURL.host &&
-            url.path == self.dismissOnMatchURL.path) {
+            url.host == self.dismissOnMatchURL.host) {
             return true
         }
         return false
@@ -250,19 +253,73 @@ class UnsplashConnectController : UIViewController, WKNavigationDelegate {
 }
 
 public class UnsplashAccessToken : CustomStringConvertible {
-    public let appId: String
+    public let access: String
     public let accessToken: String
     // TODO: Keep track of the refresh token.
     // public let refreshToken: String
     
-    public init(appId: String, accessToken: String) {
-        self.appId = appId
+    public init(access: String, accessToken: String) {
+        self.access = access
         self.accessToken = accessToken
     }
     
     public var description : String {
         return self.accessToken
     }
+}
+
+public enum OAuth2Error {
+    case unauthorizedClient
+    
+    /// The resource owner or authorization server denied the request.
+    case accessDenied
+    
+    /// The authorization server does not support obtaining an access token using this method.
+    case unsupportedResponseType
+    
+    /// The requested scope is invalid, unknown, or malformed.
+    case invalidScope
+    
+    /// The authorization server encountered an unexpected condition that prevented it from
+    /// fulfilling the request.
+    case serverError
+    
+    /// Client authentication failed due to unknown client, no client authentication included,
+    /// or unsupported authentication method.
+    case invalidClient
+    
+    /// The request is missing a required parameter, includes an unsupported parameter value, or
+    /// is otherwise malformed.
+    case invalidRequest
+    
+    /// The provided authorization grant is invalid, expired, revoked, does not match the
+    /// redirection URI used in the authorization request, or was issued to another client.
+    case invalidGrant
+    
+    /// The authorization server is currently unable to handle the request due to a temporary
+    /// overloading or maintenance of the server.
+    case temporarilyUnavailable
+    
+    // The user canceled the authorization process.
+    case userCanceledAuth
+    
+    /// Some other error.
+    case unknown
+    
+    init(errorCode: String) {
+        switch errorCode {
+        case "unauthorized_client": self = .unauthorizedClient
+        case "access_denied": self = .accessDenied
+        case "unsupported_response_type": self = .unsupportedResponseType
+        case "invalid_scope": self = .invalidScope
+        case "invalid_client": self = .invalidClient
+        case "server_error": self = .serverError
+        case "temporarily_unavailable": self = .temporarilyUnavailable
+        case "invalid_request": self = .invalidRequest
+        default: self = .unknown
+        }
+    }
+    
 }
 
 public struct Error {
@@ -333,14 +390,24 @@ public struct Error {
     }
 }
 
-class Keychain {
-    
-    class func queryWithDict(query: [String : AnyObject]) -> CFDictionary {
 
+/// The result of an authorization attempt.
+public enum UnsplashOAuthResult {
+    /// The authorization succeeded. Includes a `UnsplashAccessToken`.
+    case success(UnsplashAccessToken)
+    
+    /// The authorization failed. Includes an `OAuthError` and a descriptive message.
+    case error(OAuth2Error, String)
+    
+    /// The authorization was manually canceled by the user.
+    case cancel
+}
+
+class Keychain {
+    class func queryWithDict(query: [String : AnyObject]) -> CFDictionary {
         let bundleId = Bundle.main.bundleIdentifier ?? ""
-        
         var queryDict = query
-        
+
         queryDict[kSecClass as String]       = kSecClassGenericPassword
         queryDict[kSecAttrService as String] = "\(bundleId).unsplash.auth" as AnyObject
         
@@ -411,7 +478,37 @@ class Keychain {
 }
 
 
+class Reachability {
+    /// From http://stackoverflow.com/questions/25623272/how-to-use-scnetworkreachability-in-swift/25623647#25623647.
+    ///
+    /// This method uses `SCNetworkReachabilityCreateWithAddress` to create a reference to monitor the example host
+    /// defined by our zeroed `zeroAddress` struct. From this reference, we can extract status flags regarding the
+    /// reachability of this host, using `SCNetworkReachabilityGetFlags`.
+    
+    class func connectedToNetwork() -> Bool {
+        var zeroAddress = sockaddr_in()
+        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        
+        guard let defaultRouteReachability = withUnsafePointer(to: &zeroAddress, {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+                SCNetworkReachabilityCreateWithAddress(nil, $0)
 
+            }
+        }) else {
+            return false
+        }
+        
+        var flags: SCNetworkReachabilityFlags = []
+        if !SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) {
+            return false
+        }
+        
+        let isReachable = flags.contains(.reachable)
+        let needsConnection = flags.contains(.connectionRequired)
+        return (isReachable && !needsConnection)
+    }
+}
 
 
 

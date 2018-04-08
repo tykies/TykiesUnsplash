@@ -12,15 +12,15 @@ public class Unsplash {
     
     public static var client : UnsplashClient?
     
-    public static func setUpWithAppId(_ appId : String, secret : String, scopes: [String]=UnsplashAuthManager.publicScope) {
-        precondition(appId != "APP_ID" && secret != "SECRET", "app id and secret are not valid")
+    public static func setUpWithAccess(_ access : String, secret : String, scopes: [String]=UnsplashOAuthManager.publicScope) {
+        precondition(access != "APP_ID" && secret != "SECRET", "app id and secret are not valid")
         precondition(UnsplashClient.sharedClient == nil, "only call `UnsplashClient.init` one time")
         
-        UnsplashAuthManager.sharedAuthManager = UnsplashAuthManager(appId: appId, secret: secret, scopes: scopes)
-        UnsplashClient.sharedClient = UnsplashClient(appId: appId)
+        UnsplashOAuthManager.sharedOAuthManager = UnsplashOAuthManager(access: access, secret: secret, scopes: scopes)
+        UnsplashClient.sharedClient = UnsplashClient(access: access)
         Unsplash.client = UnsplashClient.sharedClient
         
-        if let token = UnsplashAuthManager.sharedAuthManager.getAccessToken() {
+        if let token = UnsplashOAuthManager.sharedOAuthManager.getAccessToken() {
             UnsplashClient.sharedClient.accessToken = token
         }
     }
@@ -30,15 +30,15 @@ public class Unsplash {
         
         Unsplash.client = nil
         UnsplashClient.sharedClient = nil
-        UnsplashAuthManager.sharedAuthManager.clearAccessToken()
-        UnsplashAuthManager.sharedAuthManager = nil
+        UnsplashOAuthManager.sharedOAuthManager.clearAccessToken()
+        UnsplashOAuthManager.sharedOAuthManager = nil
     }
     
     public static func authorizeFromController(controller: UIViewController, completion:@escaping (Bool, NSError?) -> Void) {
-        precondition(UnsplashAuthManager.sharedAuthManager != nil, "call `UnsplashAuthManager.init` before calling this method")
+        precondition(UnsplashOAuthManager.sharedOAuthManager != nil, "call `UnsplashOAuthManager.init` before calling this method")
         precondition(!UnsplashClient.sharedClient.authorized, "client is already authorized")
         
-        UnsplashAuthManager.sharedAuthManager.authorizeFromController(controller, completion: { token, error in
+        UnsplashOAuthManager.sharedOAuthManager.authorizeFromController(controller, completion: { token, error in
             if let accessToken = token {
                 UnsplashClient.sharedClient.accessToken = accessToken
                 completion(true, nil)

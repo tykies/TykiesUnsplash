@@ -23,6 +23,31 @@ public class User {
     public let location : String?
     public let email : String?
     
+//    public let id: String = ""
+//    public let updatedAt: String
+//    public let username: String
+//    public let name: String
+//    public let firstName: String
+//    public let lastName: String
+//    public let instagramUsername: String
+//    public let twitterUsername: String
+//    public let portfolioUrl: Any?
+//    public let bio: String
+//    public let location: String
+//    public let totalLikes: Int
+//    public let totalPhotos: Int
+//    public let totalCollections: Int
+//    public let followedByUser: Bool
+//    public let followersCount: Int
+//    public let followingCount: Int
+//    public let downloads: Int
+////    public let profileImage: ProfileImage
+////    public let badge: Badge
+////    public let links: Links
+
+    
+    
+    
     public init(
         id: String?,
         username: String,
@@ -37,7 +62,7 @@ public class User {
         instagramUsername : String?,
         location : String?,
         email : String?) {
-        
+
         self.id = id;
         self.username = username;
         self.name = name
@@ -57,7 +82,7 @@ public class ProfilePhotoURL {
     public let large : URL
     public let medium : URL
     public let small : URL
-//    public let custom : URL?
+//    public let custom : URL
     
     public init(large: URL,
                 medium: URL,
@@ -131,7 +156,7 @@ public class Photo {
     public let user : User?
     public let url : PhotoURL
     public let categories : Array<Category>?
-    public let exif : Exif?
+
     public let downloads : UInt32?
     public let likes : UInt32?
     public let location : Location?
@@ -143,7 +168,6 @@ public class Photo {
                 user: User?,
                 url: PhotoURL,
                 categories: Array<Category>?,
-                exif: Exif?,
                 downloads: UInt32?,
                 likes: UInt32?,
                 location: Location?) {
@@ -155,7 +179,7 @@ public class Photo {
         self.user = user
         self.url = url
         self.categories = categories
-        self.exif = exif
+
         self.downloads = downloads
         self.likes = likes
         self.location = location

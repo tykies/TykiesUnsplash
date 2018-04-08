@@ -12,7 +12,7 @@ import Alamofire
 public class UnsplashClient {
     let host : String
     let manager : SessionManager
-    let appId : String
+    let access : String
     public var collections : CollectionsRoutes!
     public var categories : CategoriesRoutes!
     public var stats : StatsRoutes!
@@ -23,8 +23,8 @@ public class UnsplashClient {
     
     public static var sharedClient : UnsplashClient!
     
-    public init(appId: String, manager: SessionManager, host: String) {
-        self.appId = appId
+    public init(access: String, manager: SessionManager, host: String) {
+        self.access = access
         self.host = host
         self.manager = manager
         self.collections = CollectionsRoutes(client: self)
@@ -36,10 +36,10 @@ public class UnsplashClient {
     }
     
     
-    public convenience init(appId: String) {
+    public convenience init(access: String) {
         let manager = SessionManager()
         manager.startRequestsImmediately = false
-        self.init(appId: appId, manager: manager, host: "https://api.unsplash.com")
+        self.init(access: access, manager: manager, host: "https://api.unsplash.com")
     }
     
     public func additionalHeaders(authNeeded: Bool) -> [String : String] {
@@ -50,7 +50,7 @@ public class UnsplashClient {
         if (authNeeded) {
             headers["Authorization"] = "Bearer \(self.accessToken!.accessToken)"
         } else {
-            headers["Authorization"] = "Client-ID \(self.appId)"
+            headers["Authorization"] = "Client-ID \(self.access)"
         }
         return headers
     }

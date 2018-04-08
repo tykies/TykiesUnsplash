@@ -57,13 +57,6 @@ class ImageCell: UICollectionViewCell {
     func configureCellWithURLString(URLString: String) {
         let size = imageView.frame.size
         
-//        imageView.af_setImageWithURL(
-//            NSURL(string: URLString)!,
-//            placeholderImage: nil,
-//            filter: AspectScaledToFillSizeFilter.init(size: size),
-//            imageTransition: .CrossDissolve(0.2)
-//        )
-        
         imageView.af_setImage(withURL: URL(string: URLString)!, placeholderImage: nil, filter: AspectScaledToFillSizeFilter.init(size: size), progress: nil, progressQueue: DispatchQueue.main, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: true, completion: nil)
     }
     
