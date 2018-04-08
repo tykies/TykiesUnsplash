@@ -159,7 +159,7 @@ public class Photo {
 
     public let downloads : UInt32?
     public let likes : UInt32?
-    public let location : Location?
+
     
     public init(id: String,
                 width: UInt32?,
@@ -169,8 +169,8 @@ public class Photo {
                 url: PhotoURL,
                 categories: Array<Category>?,
                 downloads: UInt32?,
-                likes: UInt32?,
-                location: Location?) {
+                likes: UInt32?
+                ) {
         
         self.id = id
         self.width = width;
@@ -182,7 +182,7 @@ public class Photo {
 
         self.downloads = downloads
         self.likes = likes
-        self.location = location
+
     }
 }
 public class PhotoURL {

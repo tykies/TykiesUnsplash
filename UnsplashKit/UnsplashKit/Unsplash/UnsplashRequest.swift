@@ -29,8 +29,6 @@ public class UnsplashRequest<RType : JSONSerializer> {
 
         self.init(client: client, method: .get, route: route, auth: auth, params: params, responseSerializer: responseSerializer)
 
-        
-
     }
     
     @discardableResult

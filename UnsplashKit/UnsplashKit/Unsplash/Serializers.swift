@@ -489,7 +489,7 @@ extension User {
                 let username = StringSerializer().deserialize(dict["username"] ?? .null)
                 let name = StringSerializer().deserialize(dict["name"]!)
                 let firstName = StringSerializer().deserialize(dict["first_name"]!)
-                let lastName = StringSerializer().deserialize(dict["last_name"]!)
+                let lastName = StringSerializer().deserialize(dict["last_name"] ?? .null)
 //                let downloads = UInt32Serializer().deserialize((dict["downloads"])!)
                 let profilePhoto = ProfilePhotoURL.Serializer().deserialize(dict["profile_image"]!)
 //                let portfolioURL = URLSerializer().deserialize(dict["portfolio_url"]!)
@@ -650,14 +650,14 @@ extension Photo {
                 let width = UInt32Serializer().deserialize(dict["width"]!)
                 let height = UInt32Serializer().deserialize(dict["height"]!)
                 let color = UIColorSerializer().deserialize(dict["color"]!)
-                let user = User.Serializer().deserialize(dict["user"]!)
+                let user = User.Serializer().deserialize(dict["user"] ?? .null)
                 let url = PhotoURL.Serializer().deserialize(dict["urls"] ?? .null)
                 let categories = ArraySerializer(Category.Serializer()).deserialize(dict["categories"]!)
 //                let exif = Exif.Serializer().deserialize(dict["exif"]!)
                 let downloads = UInt32Serializer().deserialize(dict["downloads"] ?? .number(0))
                 let likes = UInt32Serializer().deserialize(dict["likes"]!)
-                let location = Location.Serializer().deserialize(dict["location"] ?? .null)
-                return Photo(id: id, width: width, height: height, color: color, user: user, url: url, categories: categories, downloads: downloads, likes: likes, location: location)
+
+                return Photo(id: id, width: width, height: height, color: color, user: user, url: url, categories: categories, downloads: downloads, likes: likes)
             default:
                 fatalError("error deserializing")
             }
