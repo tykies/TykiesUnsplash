@@ -9,88 +9,68 @@
 import UIKit
 
 public class User {
-    public let id : String?
-    public let username : String
-    public let name : String?
-    public let firstName : String?
-    public let lastName : String?
-    public let downloads : UInt32?
-    public let profilePhoto : ProfilePhotoURL?
-    public let portfolioURL : URL?
-    public let bio : String?
-    public let uploadsRemaining : UInt32?
-    public let instagramUsername : String?
-    public let location : String?
-    public let email : String?
-    
-//    public let id: String = ""
-//    public let updatedAt: String
-//    public let username: String
-//    public let name: String
-//    public let firstName: String
-//    public let lastName: String
-//    public let instagramUsername: String
-//    public let twitterUsername: String
-//    public let portfolioUrl: Any?
-//    public let bio: String
-//    public let location: String
-//    public let totalLikes: Int
-//    public let totalPhotos: Int
-//    public let totalCollections: Int
-//    public let followedByUser: Bool
-//    public let followersCount: Int
-//    public let followingCount: Int
-//    public let downloads: Int
-////    public let profileImage: ProfileImage
-////    public let badge: Badge
-////    public let links: Links
-
+    public let id: String
+    public let updatedAt: String
+    public let username: String
+    public let name: String
+    public let firstName: String
+    public let lastName: String?
+    public let twitterUsername: String?
+    public let instagramUsername: String?
+    public let portfolioUrl: URL?
+    public let bio: String?
+    public let location: String?
+    public let totalLikes: Int
+    public let totalPhotos: Int
+    public let totalCollections: Int
     
     
-    
-    public init(
-        id: String?,
-        username: String,
-        name: String?,
-        firstName: String?,
-        lastName: String?,
-        downloads: UInt32?,
-        profilePhoto: ProfilePhotoURL?,
-        portfolioURL: URL?,
-        bio : String?,
-        uploadsRemaining: UInt32?,
-        instagramUsername : String?,
-        location : String?,
-        email : String?) {
-
-        self.id = id;
-        self.username = username;
+    public let profileImage: ProfilePhotoURL
+    public let links: Links
+    public init(id: String, updatedAt: String, username: String, name: String, firstName: String, lastName: String?, twitterUsername: String?, instagramUsername: String?, portfolioUrl: URL?, bio: String?, location: String?, totalLikes: Int, totalPhotos: Int, totalCollections: Int, profileImage: ProfilePhotoURL, links: Links) {
+        self.id = id
+        self.updatedAt = updatedAt
+        self.username = username
         self.name = name
         self.firstName = firstName
         self.lastName = lastName
-        self.downloads = downloads
-        self.profilePhoto = profilePhoto
-        self.portfolioURL = portfolioURL
-        self.bio = bio
-        self.uploadsRemaining = uploadsRemaining
+        self.twitterUsername = twitterUsername
         self.instagramUsername = instagramUsername
+        self.portfolioUrl = portfolioUrl
+        self.bio = bio
         self.location = location
-        self.email = email
+        self.totalLikes = totalLikes
+        self.totalPhotos = totalPhotos
+        self.totalCollections = totalCollections
+        self.profileImage = profileImage
+        self.links = links
+    }
+    
+
+}
+
+public class Links {
+    public let user: URL  // 'self -> user'
+    public let html: URL
+    public let download: URL
+    public let downloadLocation: URL
+    public init(user: URL, html: URL, download: URL, downloadLocation: URL) {
+        self.user = user
+        self.html = html
+        self.download = download
+        self.downloadLocation = downloadLocation
     }
 }
+
+
 public class ProfilePhotoURL {
-    public let large : URL
-    public let medium : URL
-    public let small : URL
-//    public let custom : URL
-    
-    public init(large: URL,
-                medium: URL,
-                small: URL) {
-        self.large = large
-        self.medium = medium
+    public let small: URL
+    public let medium: URL
+    public let large: URL
+    public init(small: URL, medium: URL, large: URL) {
         self.small = small
-//        self.custom = custom
+        self.medium = medium
+        self.large = large
     }
 }
 public class CollectionsResult {
@@ -132,6 +112,7 @@ public class PhotoCollectionResult {
         self.collection = collection
     }
 }
+
 public class PhotoUserResult {
     public let photo : Photo
     public let user : User
@@ -148,60 +129,61 @@ public class PhotosResult {
         self.photos = photos
     }
 }
+
+
 public class Photo {
-    public let id : String
-    public let width : UInt32?
-    public let height : UInt32?
-    public let color : UIColor?
-    public let user : User?
-    public let url : PhotoURL
-    public let categories : Array<Category>?
-
-    public let downloads : UInt32?
-    public let likes : UInt32?
-
+    public let id: String
+    public let createdAt: String
+    public let updatedAt: String
+    public let width: Int
+    public let height: Int
+    public let color: UIColor
+    public let likes: Int
+    public let likedByUser: Bool
+    public let description: Any?
+    public let sponsored: Bool
     
-    public init(id: String,
-                width: UInt32?,
-                height: UInt32?,
-                color: UIColor?,
-                user: User?,
-                url: PhotoURL,
-                categories: Array<Category>?,
-                downloads: UInt32?,
-                likes: UInt32?
-                ) {
-        
+    public let user: User
+    public let currentUserCollections: [Any]
+    
+    public let urls: PhotoURL
+    public let categories: [Any]
+    
+    public let links: Links
+    
+    public init(id: String, createdAt: String, updatedAt: String, width: Int, height: Int, color: UIColor, likes: Int, likedByUser: Bool, description: Any?, sponsored: Bool, user: User, currentUserCollections: [Any], urls: PhotoURL, categories: [Any], links: Links) {
         self.id = id
-        self.width = width;
-        self.height = height;
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.width = width
+        self.height = height
         self.color = color
-        self.user = user
-        self.url = url
-        self.categories = categories
-
-        self.downloads = downloads
         self.likes = likes
-
+        self.likedByUser = likedByUser
+        self.description = description
+        self.sponsored = sponsored
+        self.user = user
+        self.currentUserCollections = currentUserCollections
+        self.urls = urls
+        self.categories = categories
+        self.links = links
     }
-}
-public class PhotoURL {
-    public let full : URL
-    public let regular : URL
-    public let small : URL
-    public let thumb : URL
-    public let custom : URL?
     
-    public init(full: URL,
-                regular: URL,
-                small: URL,
-                thumb: URL,
-                custom: URL?) {
+}
+
+
+public class PhotoURL {
+    public let raw: URL
+    public let full: URL
+    public let regular: URL
+    public let small: URL
+    public let thumb: URL
+    public init(raw: URL, full: URL, regular: URL, small: URL, thumb: URL) {
+        self.raw = raw
         self.full = full
         self.regular = regular
         self.small = small
         self.thumb = thumb
-        self.custom = custom
     }
 }
 public class CategoriesResult {

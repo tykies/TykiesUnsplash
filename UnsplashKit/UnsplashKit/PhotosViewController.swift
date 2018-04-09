@@ -84,7 +84,7 @@ class PhotosViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell{
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.ReuseIdentifier, for: indexPath as IndexPath) as! ImageCell
         let photo = self.photos[indexPath.row]
-        cell.configureCellWithURLString(URLString: photo.url.small.absoluteString)
+        cell.configureCellWithURLString(URLString: photo.urls.small.absoluteString)
         
         return cell
     }

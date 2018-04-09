@@ -54,9 +54,9 @@ class ProfileViewController: UIViewController {
             self.imageView.isHidden = false
             self.client.currentUser.profile().response({ response, error in
                 if let user = response {
-                    self.label.text = "\(user.firstName!) \(user.lastName!)"
-//                    self.imageView.af_setImageWithURL(user.profilePhoto!.small)
-                    self.imageView.af_setImage(withURL: (user.profilePhoto?.small)!)
+                    self.label.text = "\(user.firstName) \(user.lastName!)"
+
+                    self.imageView.af_setImage(withURL: (user.profileImage.small))
                 } else {
                     print("ERROR: " + error!.description)
                 }

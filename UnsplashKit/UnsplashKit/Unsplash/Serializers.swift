@@ -475,7 +475,7 @@ extension User {
     public class Serializer : JSONSerializer {
         public func serialize(_ value: User) -> JSON {
             let output = [
-                "id": Serialization._StringSerializer.serialize(value.id!)
+                "id": Serialization._StringSerializer.serialize(value.id)
             ]
             
             return .dictionary(output)
@@ -486,25 +486,74 @@ extension User {
             switch json {
             case .dictionary(let dict):
                 let id = StringSerializer().deserialize(dict["id"]!)
+                let updatedAt = StringSerializer().deserialize(dict["updatedAt"]!)
                 let username = StringSerializer().deserialize(dict["username"] ?? .null)
                 let name = StringSerializer().deserialize(dict["name"]!)
                 let firstName = StringSerializer().deserialize(dict["first_name"]!)
                 let lastName = StringSerializer().deserialize(dict["last_name"] ?? .null)
-//                let downloads = UInt32Serializer().deserialize((dict["downloads"])!)
-                let profilePhoto = ProfilePhotoURL.Serializer().deserialize(dict["profile_image"]!)
-//                let portfolioURL = URLSerializer().deserialize(dict["portfolio_url"]!)
+                
+                let twitterUsername = StringSerializer().deserialize(dict["twitterUsername"]!)
+                
+                let totalLikes = Int32Serializer().deserialize(dict["totalLikes"]!)
+                let totalPhotos = Int32Serializer().deserialize(dict["totalPhotos"]!)
+                
+                let totalCollections = Int32Serializer().deserialize(dict["totalCollections"]!)
+
+                let profileImage = ProfilePhotoURL.Serializer().deserialize(dict["profile_image"]!)
+
                 let bio = StringSerializer().deserialize(dict["bio"]!)
-//                let uploadsRemaining = UInt32Serializer().deserialize(dict["uploads_remaining"]!)
-//                let instagramUsername = StringSerializer().deserialize(dict["instagram_username"]!)
+
+                let instagramUsername = StringSerializer().deserialize(dict["instagram_username"]!)
                 let location = StringSerializer().deserialize(dict["location"]!)
-//                let email = StringSerializer().deserialize(dict["email"]!)
-                return User(id: id, username: username, name: name, firstName: firstName, lastName: lastName, downloads: nil, profilePhoto: profilePhoto, portfolioURL: nil, bio: bio, uploadsRemaining: nil, instagramUsername: nil, location: location, email: nil)
+                
+                
+                let links = Links.Serializer().deserialize(dict["links"]!)
+
+                return User(id: id, updatedAt: updatedAt, username: username, name: name, firstName: firstName, lastName: lastName, twitterUsername: twitterUsername, instagramUsername: instagramUsername, portfolioUrl: nil, bio: bio, location: location, totalLikes: Int(totalLikes), totalPhotos: Int(totalPhotos), totalCollections: Int(totalCollections), profileImage: profileImage, links: links)
             default:
                 fatalError("error deserializing")
             }
         }
         
     }
+}
+
+extension Links {
+    public class Serializer : JSONSerializer {
+
+        public func serialize(_ value : Links) -> JSON {
+            let output = [
+                "large": URLSerializer().serialize(value.html)
+            ]
+            
+            return .dictionary(output)
+            
+            
+        }
+        
+        
+        public init() {}
+        
+        public func deserialize(_ json : JSON) -> Links {
+            
+            switch json {
+            case .dictionary(let dict):
+                
+                let user = URLSerializer().deserialize(dict["self"]!)
+                let html = URLSerializer().deserialize(dict["html"]!)
+                let download = URLSerializer().deserialize(dict["download"]!)
+                let downloadLocation = URLSerializer().deserialize(dict["downloadLocation"]!)
+                return Links(user: user, html: html, download: download, downloadLocation: downloadLocation)
+                
+            default:
+                fatalError("error deserializing")
+            }
+            
+        }
+        
+        
+    }
+    
 }
 
 extension ProfilePhotoURL {
@@ -524,8 +573,8 @@ extension ProfilePhotoURL {
                 let large = URLSerializer().deserialize(dict["large"] ?? .null)
                 let medium = URLSerializer().deserialize(dict["medium"] ?? .null)
                 let small = URLSerializer().deserialize(dict["small"] ?? .null)
-//                let custom = URLSerializer().deserialize(dict["custom"] ?? .null)
-                return ProfilePhotoURL(large: large, medium: medium, small: small)
+
+                return ProfilePhotoURL(small: small, medium: medium, large: large)
             default:
                 fatalError("error deserializing")
             }
@@ -633,6 +682,7 @@ extension PhotoUserResult {
 }
 
 extension Photo {
+    
     public class Serializer : JSONSerializer {
         public func serialize(_ value: Photo) -> JSON {
             let output = [
@@ -647,17 +697,23 @@ extension Photo {
             switch json {
             case .dictionary(let dict):
                 let id = StringSerializer().deserialize(dict["id"] ?? .null)
+                let createdAt = StringSerializer().deserialize(dict["createdAt"] ?? .null)
+                let updatedAt = StringSerializer().deserialize(dict["updatedAt"] ?? .null)
+                
                 let width = UInt32Serializer().deserialize(dict["width"]!)
                 let height = UInt32Serializer().deserialize(dict["height"]!)
                 let color = UIColorSerializer().deserialize(dict["color"]!)
                 let user = User.Serializer().deserialize(dict["user"] ?? .null)
                 let url = PhotoURL.Serializer().deserialize(dict["urls"] ?? .null)
                 let categories = ArraySerializer(Category.Serializer()).deserialize(dict["categories"]!)
-//                let exif = Exif.Serializer().deserialize(dict["exif"]!)
+                let exif = Exif.Serializer().deserialize(dict["exif"]!)
+
                 let downloads = UInt32Serializer().deserialize(dict["downloads"] ?? .number(0))
                 let likes = UInt32Serializer().deserialize(dict["likes"]!)
 
-                return Photo(id: id, width: width, height: height, color: color, user: user, url: url, categories: categories, downloads: downloads, likes: likes)
+                let likedByUser = BoolSerializer().deserialize(dict["likedByUser"]!)
+                
+                return Photo(id: id, createdAt: createdAt, updatedAt: updatedAt, width: Int(width), height: Int(height), color: color, likes: Int(likes), likedByUser: likedByUser, description: <#Any?#>, sponsored: <#Bool#>, user: user, currentUserCollections: <#[Any]#>, urls: url, categories: categories, links: likes)
             default:
                 fatalError("error deserializing")
             }
@@ -701,12 +757,13 @@ extension PhotoURL {
         public func deserialize(_ json: JSON) -> PhotoURL {
             switch json {
             case .dictionary(let dict):
+                let raw = URLSerializer().deserialize(dict["raw"] ?? .null)
                 let full = URLSerializer().deserialize(dict["full"] ?? .null)
                 let regular = URLSerializer().deserialize(dict["regular"] ?? .null)
                 let small = URLSerializer().deserialize(dict["small"] ?? .null)
                 let thumb = URLSerializer().deserialize(dict["thumb"] ?? .null)
-//                let custom = URLSerializer().deserialize(dict["custom"]!)
-                return PhotoURL(full: full, regular: regular, small: small, thumb: thumb, custom: nil)
+
+                return PhotoURL(raw: raw, full: full, regular: regular, small: small, thumb: thumb)
             default:
                 fatalError("error deserializing")
             }
