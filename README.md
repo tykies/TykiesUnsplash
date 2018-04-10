@@ -2,7 +2,7 @@
 
 TykiesUnsplash 是对[Unsplash API](https://unsplash.com/developers) 的接口封装。
 
-![屏幕快照 2018-04-10 16.56.59](media/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202018-04-10%2016.56.59.png)
+![屏幕快照 2018-04-10 16.56.59-w657](media/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202018-04-10%2016.56.59.png)
 
 
 ## **Background：**
