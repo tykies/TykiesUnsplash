@@ -26,8 +26,8 @@ public class User {
     
     
     public let profileImage: ProfilePhotoURL
-    public let links: Links
-    public init(id: String, updatedAt: String, username: String, name: String, firstName: String, lastName: String?, twitterUsername: String?, instagramUsername: String?, portfolioUrl: URL?, bio: String?, location: String?, totalLikes: Int, totalPhotos: Int, totalCollections: Int, profileImage: ProfilePhotoURL, links: Links) {
+    public let links: UserLinks
+    public init(id: String, updatedAt: String, username: String, name: String, firstName: String, lastName: String?, twitterUsername: String?, instagramUsername: String?, portfolioUrl: URL?, bio: String?, location: String?, totalLikes: Int, totalPhotos: Int, totalCollections: Int, profileImage: ProfilePhotoURL, links: UserLinks) {
         self.id = id
         self.updatedAt = updatedAt
         self.username = username
@@ -49,7 +49,28 @@ public class User {
 
 }
 
-public class Links {
+public class UserLinks {
+    public let user: URL
+    public let html: URL
+    public let photos: URL
+    public let likes: URL
+    public let portfolio: URL
+    public let following: URL
+    public let followers: URL
+    
+    public init(user: URL, html: URL, photos: URL, likes: URL, portfolio: URL, following: URL, followers: URL) {
+        self.user = user
+        self.html = html
+        self.photos = photos
+        self.likes = likes
+        self.portfolio = portfolio
+        self.following = following
+        self.followers = followers
+    }
+
+}
+
+public class PhotoLinks {
     public let user: URL  // 'self -> user'
     public let html: URL
     public let download: URL
@@ -149,9 +170,9 @@ public class Photo {
     public let urls: PhotoURL
     public let categories: [Any]
     
-    public let links: Links
+    public let links: PhotoLinks
     
-    public init(id: String, createdAt: String, updatedAt: String, width: Int, height: Int, color: UIColor, likes: Int, likedByUser: Bool, description: Any?, sponsored: Bool, user: User, currentUserCollections: [Any], urls: PhotoURL, categories: [Any], links: Links) {
+    public init(id: String, createdAt: String, updatedAt: String, width: Int, height: Int, color: UIColor, likes: Int, likedByUser: Bool, description: Any?, sponsored: Bool, user: User, currentUserCollections: [Any], urls: PhotoURL, categories: [Any], links: PhotoLinks) {
         self.id = id
         self.createdAt = createdAt
         self.updatedAt = updatedAt
