@@ -140,6 +140,9 @@ open class StringSerializer: JSONSerializer {
     
     open func deserialize(_ json: JSON) -> String {
         switch (json) {
+        case .null:
+            return ""
+            
         case .str(let s):
             return s
         default:

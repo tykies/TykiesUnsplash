@@ -17,6 +17,8 @@ public class UnsplashRequest<RType : JSONSerializer> {
 
         self.responseSerializer = responseSerializer
         
+
+        
         let url = "\(client.host)\(route)"
         let headers = client.additionalHeaders(authNeeded: auth)
 
@@ -35,6 +37,9 @@ public class UnsplashRequest<RType : JSONSerializer> {
     public func response(_ completionHandler: @escaping (RType.ValueType?, CallError?) -> Void) -> Self {
         
         self.request.validate().responseJSON { response in
+            
+
+            
             if (response.result.isFailure) {
                 completionHandler(nil, self.handleResponseError(response))
             } else {
