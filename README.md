@@ -75,6 +75,7 @@ client.photos.findPhotos(2, perPage:nil).response({ response, error in
 * [ ] JSON 解析优化，待完善
 * [ ] 继续完善基础框架
 * [ ] 整理并输出文档
+* [ ] 单元测试
 
 
 # Document 

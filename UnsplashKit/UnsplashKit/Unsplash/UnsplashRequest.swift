@@ -38,13 +38,12 @@ public class UnsplashRequest<RType : JSONSerializer> {
         
         self.request.validate().responseJSON { response in
             
-
-            
             if (response.result.isFailure) {
                 completionHandler(nil, self.handleResponseError(response))
             } else {
                 let value = response.result.value!
                 completionHandler(self.responseSerializer.deserialize(SerializeUtil.objectToJSON(value as AnyObject)), nil)
+//                completionHandler(responseSerializer.deserialize(SerializeUtil.prepareJSONForSerialization(value as! JSON) as! JSON), nil)
             }
         }
 
@@ -158,10 +157,8 @@ public enum CallError : CustomStringConvertible {
     }
 }
 
-
 func utf8Decode(_ data: Data) -> String {
-    
     return String(data: data, encoding: String.Encoding.utf8)!
-//    return NSString(data: data, encoding: String.Encoding.utf8.rawValue)! as String
+
 }
 
