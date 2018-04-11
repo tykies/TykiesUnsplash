@@ -89,7 +89,6 @@ public class PhotosRoutes {
         
         let data = UIImageJPEGRepresentation(photo, 0.7)
         var params = [String : AnyObject]()
-//        params["photo"] = data!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         
         params["photo"] = data!.base64EncodedString(options: .lineLength64Characters) as AnyObject
 

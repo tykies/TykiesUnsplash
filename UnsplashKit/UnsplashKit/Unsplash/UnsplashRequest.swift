@@ -17,7 +17,6 @@ public class UnsplashRequest<RType : JSONSerializer> {
 
         self.responseSerializer = responseSerializer
         
-
         
         let url = "\(client.host)\(route)"
         let headers = client.additionalHeaders(authNeeded: auth)
@@ -42,11 +41,11 @@ public class UnsplashRequest<RType : JSONSerializer> {
                 completionHandler(nil, self.handleResponseError(response))
             } else {
                 let value = response.result.value!
-                completionHandler(self.responseSerializer.deserialize(SerializeUtil.objectToJSON(value as AnyObject)), nil)
-//                completionHandler(responseSerializer.deserialize(SerializeUtil.prepareJSONForSerialization(value as! JSON) as! JSON), nil)
+            completionHandler(self.responseSerializer.deserialize(SerializeUtil.objectToJSON(value as AnyObject)), nil)
+                
+
             }
         }
-
         
         return self
     }

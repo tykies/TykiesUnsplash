@@ -125,6 +125,8 @@ open class ArraySerializer<T : JSONSerializer> : JSONSerializer {
     
     public func deserialize(_ json : JSON) -> Array<T.ValueType> {
         switch json {
+        case .null:
+            return []
         case .array(let arr):
             return arr.map { self.elementSerializer.deserialize($0) }
         default:
@@ -317,6 +319,8 @@ open class Int32Serializer: JSONSerializer {
     
     open func deserialize(_ json: JSON) -> Int32 {
         switch json {
+        case .null:
+            return 0
         case .number(let n):
             return n.int32Value
         default:
@@ -331,6 +335,8 @@ open class UInt32Serializer: JSONSerializer {
     
     open func deserialize(_ json: JSON) -> UInt32 {
         switch json {
+        case .null:
+            return 0
         case .number(let n):
             return n.uint32Value
         default:
@@ -348,6 +354,8 @@ open class NSDataSerializer: JSONSerializer {
     
     open func deserialize(_ json: JSON) -> Data {
         switch(json) {
+        case .null:
+            return Data()
         case .str(let s):
             return Data(base64Encoded: s, options: [])!
         default:
@@ -363,6 +371,8 @@ open class DoubleSerializer: JSONSerializer {
     
     open func deserialize(_ json: JSON) -> Double {
         switch json {
+        case .null:
+            return 0
         case .number(let n):
             return n.doubleValue
         default:
