@@ -45,12 +45,12 @@ class PhotosViewController: UICollectionViewController {
     }
     
     private func setUpCollectionView() {
-        self.collectionView!.register(ImageCell.self, forCellWithReuseIdentifier: ImageCell.ReuseIdentifier)
+
         self.collectionView!.backgroundColor = UIColor.white
     }
     
     private func loadImages() {
-        self.client!.photos.findPhotos().response({ response, error in
+        self.client!.photos.findPhotos(page: 1, perPage: 30).response({ response, error in
             if let e = error {
                 let controller = UIAlertController(title: "Unsplash Error", message: e.description, preferredStyle: .alert)
                 let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
@@ -65,15 +65,6 @@ class PhotosViewController: UICollectionViewController {
     
     }
     
-    private func sizeForCollectionViewItem() -> CGSize {
-        let viewWidth = view.bounds.size.width
-        
-        let cellWidth = viewWidth
-        let cellHeight = CGFloat(200)
-        
-        return CGSize(width: cellWidth, height: cellHeight)
-    }
-    
     // MARK: UICollectionViewDataSource
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -82,31 +73,15 @@ class PhotosViewController: UICollectionViewController {
     
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell{
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.ReuseIdentifier, for: indexPath as IndexPath) as! ImageCell
+        
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCell", for: indexPath) as! ImageCell
+        
         let photo = self.photos[indexPath.row]
         cell.configureCellWithURLString(URLString: photo.urls.small.absoluteString)
-        
+        cell.titleLabel.text = photo.user.firstName
         return cell
     }
     
-    // MARK: UICollectionViewDelegateFlowLayout
-    
-    func collectionView(collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-//        return sizeForCollectionViewItem()
-        
-        return CGSize(width: 100, height: 100)
-    }
-    
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets.zero
-    }
-    
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
-        return 0
-    }
-    
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
-        return 0
-    }
     
 }

@@ -24,48 +24,59 @@ import UIKit
 import Alamofire
 import AlamofireImage
 
-class ImageCell: UICollectionViewCell {
-    class var ReuseIdentifier: String { return "com.unsplash.identifier.\(type(of: self))" }
-    let imageView: UIImageView
+final class ImageCell: UICollectionViewCell {
     
-    // MARK: - Initialization
-    
-    override init(frame: CGRect) {
-        imageView = {
-            let imageView = UIImageView(frame: frame)
-            
-            imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            imageView.contentMode = .center
-            imageView.clipsToBounds = true
-            
-            return imageView
-            }()
+    @IBOutlet weak var backgroundImageView: UIImageView!
+    @IBOutlet weak var overlayView: UIView!
+    @IBOutlet weak var titleLabel: UILabel!
+
+    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
+        super.apply(layoutAttributes)
         
-        super.init(frame: frame)
+        let featuredHeight: CGFloat = Constant.featuredHeight
+        let standardHeight: CGFloat = Constant.standardHegiht
         
-        contentView.addSubview(imageView)
+        let delta = 1 - (featuredHeight - frame.height) / (featuredHeight - standardHeight)
         
-        imageView.frame = contentView.bounds
+        let minAlpha: CGFloat = Constant.minAlpha
+        let maxAlpha: CGFloat = Constant.maxAlpha
+        
+        let alpha = maxAlpha - (delta * (maxAlpha - minAlpha))
+        overlayView.alpha = alpha
+        
+        let scale = max(delta, 0.5)
+        titleLabel.transform = CGAffineTransform(scaleX: scale, y: scale)
+        
+
     }
     
-    required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    
     
     // MARK: - Lifecycle Methods
     
     func configureCellWithURLString(URLString: String) {
-        let size = imageView.frame.size
+        let size = backgroundImageView.frame.size
         
-        imageView.af_setImage(withURL: URL(string: URLString)!, placeholderImage: nil, filter: AspectScaledToFillSizeFilter.init(size: size), progress: nil, progressQueue: DispatchQueue.main, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: true, completion: nil)
+        backgroundImageView.af_setImage(withURL: URL(string: URLString)!, placeholderImage: nil, filter: AspectScaledToFillSizeFilter.init(size: size), progress: nil, progressQueue: DispatchQueue.main, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: true, completion: nil)
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        imageView.af_cancelImageRequest()
-        imageView.layer.removeAllAnimations()
-        imageView.image = nil
+        backgroundImageView.af_cancelImageRequest()
+        backgroundImageView.layer.removeAllAnimations()
+        backgroundImageView.image = nil
     }
     
 }
+
+private extension ImageCell {
+    struct Constant {
+        static let featuredHeight: CGFloat = 280
+        static let standardHegiht: CGFloat = 100
+        
+        static let minAlpha: CGFloat = 0.3
+        static let maxAlpha: CGFloat = 0.75
+    }
+}
+
