@@ -10,6 +10,7 @@
 		0EF8F59A4C9C1239FE8B849C /* Pods_UnsplashKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8809DA77DBB02684B4097235 /* Pods_UnsplashKit.framework */; };
 		1098AD592061032A006E86B6 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1098AD5820610329006E86B6 /* ExternalAccessory.framework */; };
 		10ADD79E207F33F100C223B9 /* SFFocusViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10ADD79D207F33F100C223B9 /* SFFocusViewLayout.swift */; };
+		10ADD7E12084862F00C223B9 /* abc.js in Resources */ = {isa = PBXBuildFile; fileRef = 10ADD7E02084862F00C223B9 /* abc.js */; };
 		10C6C81F1FCD442C0098932C /* PhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C6C81C1FCD442B0098932C /* PhotosViewController.swift */; };
 		10C6C8201FCD442C0098932C /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C6C81D1FCD442B0098932C /* ProfileViewController.swift */; };
 		10C6C8211FCD442C0098932C /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C6C81E1FCD442C0098932C /* ImageCell.swift */; };
@@ -59,6 +60,7 @@
 		1098AD5820610329006E86B6 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		1098AD5A2061032A006E86B6 /* UnsplashKit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UnsplashKit.entitlements; sourceTree = "<group>"; };
 		10ADD79D207F33F100C223B9 /* SFFocusViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFFocusViewLayout.swift; sourceTree = "<group>"; };
+		10ADD7E02084862F00C223B9 /* abc.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = abc.js; sourceTree = "<group>"; };
 		10C6C81C1FCD442B0098932C /* PhotosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewController.swift; sourceTree = "<group>"; };
 		10C6C81D1FCD442B0098932C /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		10C6C81E1FCD442C0098932C /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 			children = (
 				1098AD5A2061032A006E86B6 /* UnsplashKit.entitlements */,
 				10ADD79D207F33F100C223B9 /* SFFocusViewLayout.swift */,
+				10ADD7E02084862F00C223B9 /* abc.js */,
 				A148C9E11FB3EAB800C2AB31 /* Unsplash */,
 				A148C9B31FB3EA9E00C2AB31 /* AppDelegate.swift */,
 				10C6C81E1FCD442C0098932C /* ImageCell.swift */,
@@ -355,6 +358,7 @@
 				A148C9BE1FB3EA9E00C2AB31 /* LaunchScreen.storyboard in Resources */,
 				A148C9BB1FB3EA9E00C2AB31 /* Assets.xcassets in Resources */,
 				A148C9B91FB3EA9E00C2AB31 /* Main.storyboard in Resources */,
+				10ADD7E12084862F00C223B9 /* abc.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

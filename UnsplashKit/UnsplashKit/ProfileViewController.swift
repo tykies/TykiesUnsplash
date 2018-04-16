@@ -76,7 +76,9 @@ class ProfileViewController: UIViewController {
     
     @IBAction func linkButtonTapped(sender: AnyObject) {
         if self.client.authorized {
-            Unsplash.unlinkClient()
+            
+            Keychain.clear()
+//            Unsplash.unlinkClient()
         } else {
             Unsplash.authorizeFromController(controller: self) { success, error in
                 if let e = error {

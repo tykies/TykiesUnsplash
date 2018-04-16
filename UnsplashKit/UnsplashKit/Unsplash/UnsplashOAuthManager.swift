@@ -194,6 +194,9 @@ class UnsplashConnectController : UIViewController, WKNavigationDelegate {
         self.view.backgroundColor = UIColor.white
         self.cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancel(sender:)))
         self.navigationItem.rightBarButtonItem = self.cancelButton
+        
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -206,6 +209,23 @@ class UnsplashConnectController : UIViewController, WKNavigationDelegate {
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         if let url = navigationAction.request.url {
+            
+            if let path = Bundle.main.path(forResource: "abc", ofType: "js") {
+                let source = NSString(data: NSData(contentsOfFile: path)! as Data, encoding: UInt(String.Encoding.utf8.hashValue));
+                let userScript = WKUserScript(source: source! as String, injectionTime: WKUserScriptInjectionTime.atDocumentStart, forMainFrameOnly: false)
+                webView.configuration.userContentController.addUserScript(userScript)
+                
+            }
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3.5){
+                self.webView.evaluateJavaScript("__testjs__.Class1.hideLogo('sddd')") { (response, error) in
+                    if error != nil {
+                        print(" error: ")
+                    } else {
+                        print(response as! String)
+                    }
+                }
+            }
+            
             if self.dimissURLMatchesURL(url: url) {
                 self.onMatchedURL?(url)
                 self.dismiss(animated: true)
@@ -217,7 +237,8 @@ class UnsplashConnectController : UIViewController, WKNavigationDelegate {
     
     func loadURL(url: URL) {
         webView.load(URLRequest(url: url))
-
+        
+        
     }
     
     func dimissURLMatchesURL(url: URL) -> Bool {
